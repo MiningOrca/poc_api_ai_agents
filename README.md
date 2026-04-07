@@ -1,26 +1,161 @@
-# determination-orchestration
-Идея примерно т  акая же, но больше дела ется с помощью кода 
+# determination-orchestration — QA Automation with AI Agents PoC
 
-пайплайн 
-1. детерменированно генерируем  [spec_sections.json](agent/input/spec_sections.json) с помощью [build_spec_sections.py](agent/extractors/build_spec_sections.py)
-2. детерменированно генерируем [rules_views.json](agent/input/rules_views.json) с помощью [build_rules_views.py](agent/extractors/build_rules_views.py)
-3. детерменированно генерируем [contract.json](agent/input/contract.json) с помощью [openapi_contract_builder.py](agent/extractors/openapi_contract_builder.py)
-4. для каждого эндпоинта генерируем [test_cases](agent/output/test_cases) с помощью [llm_test_designer.py](agent/llm/test_designer/llm_test_designer.py)
-5. для каждого тест кейса отдельно генерируем [scenarios](agent/output/scenarios) для каждого степа и склеиваем с помощью [scenario_builder.py](agent/llm/step_designer/scenario_builder.py)
-6. для каждого сценария запускаем [test_runner.py](agent/runner/test_runner.py) на выходе получая [run_results](agent/output/run_results)
-7. для каждого подозрительного результат/ошибки считаем нужно ли отправить в ллм на проверку [result_review_prefilter.py](agent/llm/result_reviewver/result_review_prefilter.py)
-8. проверка через ллм [llm_result_review.py](agent/llm/result_reviewver/llm_result_review.py) и финальный репорт в корень [output](agent/output)
+## Описание
 
-архитектурные решения 
-- используем дорогую модель только на этапе генерации [test_cases](agent/output/test_cases), остальное генерим дешевой геммой
-- нет попыток перегенерить если не прошли чек
-- убраны ассерты кроме equal 
-- ассерты по статус коду/обязательным полям генерит код
-- отправляем на ревью только подозрительные тесты
+Проект показывает не “один большой промпт для генерации тестов”, а управляемый пайплайн:
 
-запуск через 
-[run_pipeline.py](agent/run_pipeline.py)
-указать нужно 
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY",
-                               "")
-[docker-compose.yml](mock/docker-compose.yml) ну и моки через компос запустить
+* детерминированно подготавливает входные данные из спецификации и OpenAPI,
+* генерирует тест-кейсы через LLM,
+* генерирует step-level сценарии,
+* запускает их против локального mock API,
+* отправляет в LLM-аудит только failed или suspicious результаты.
+
+## Что делает пайплайн
+
+1. Из [context.md](agent/input/context.md) детерминированно строит [spec_sections.json](agent/input/spec_sections.json)
+2. Из [spec_sections.json](agent/input/spec_sections.json) детерминированно строит [rules_views.json](agent/input/rules_views.json)
+3. Из [open_api.json](agent/input/open_api.json) детерминированно строит [contract.json](agent/input/contract.json)
+4. Для каждого endpoint генерирует abstract test cases
+5. Для каждого test case генерирует step/scenario draft и собирает executable scenario
+6. Запускает сценарии против mock API
+7. Отправляет только failed/suspicious результаты в LLM-аудит
+8. Складывает финальные артефакты в [output](agent/output)
+
+## Входные файлы
+
+Обязательные входы:
+* [agent/input/open_api.json](agent/input/open_api.json)
+* [agent/input/context.md](agent/input/context.md)
+
+## Запуск
+
+### Требования
+
+* Python 3.12
+* Docker / Docker Compose
+* `pip`
+* `OPENROUTER_API_KEY`
+
+### Установка зависимостей
+
+```bash
+pip install -r requirements.txt
+```
+
+### Переменные окружения
+
+```bash
+export OPENROUTER_API_KEY="your_key_here"
+```
+
+### Поднять mock API
+
+```bash
+docker compose -f mock/docker-compose.yml up -d --build
+```
+
+### Запустить пайплайн
+
+```bash
+python agent/run_pipeline.py
+```
+
+## Архитектура
+
+### Детерминированные этапы
+
+Обычный код используется для:
+
+* парсинга спецификации на секции,
+* построения [rules_views.json](agent/input/rules_views.json),
+* извлечения контракта из OpenAPI,
+* сборки executable scenarios,
+* запуска HTTP-запросов,
+* runtime-проверок,
+* prefilter перед аудитом.
+
+### LLM-этапы
+
+LLM используется для:
+
+* генерации abstract test cases,
+* генерации step-level scenario drafts,
+* selective audit результатов.
+
+## Роли моделей
+
+### 1. Test Designer
+
+Генерирует abstract test cases по endpoint’ам.
+
+### 2. Step Designer
+
+Генерирует step-level сценарные драфты для test cases.
+
+### 3. Result Auditor
+
+Анализирует только failed или suspicious результаты выполнения.
+
+## Модели
+
+### Test case generation
+
+* `anthropic/claude-sonnet-4.6`
+* temperature: `0.0`
+* top_p: `0.2`
+* max_output_tokens: `4000`
+
+### Step generation
+
+* `google/gemma-4-26b-a4b-it`
+* temperature: `0.1`
+* top_p: `1`
+* max_output_tokens: `4000`
+
+### Result audit
+
+* `google/gemma-4-26b-a4b-it`
+* temperature: `0.25`
+* top_p: `1`
+* max_output_tokens: `2000`
+
+Промпты не вынесены в отдельные файлы и зафиксированы прямо в коде.
+
+## Что проверяет раннер
+
+Текущий раннер поддерживает только минимальный набор проверок:
+
+* HTTP status code
+* required response fields
+* equality assertions
+
+## Финальные артефакты
+
+Финальные результаты пишутся в:
+
+```text
+agent/output/
+```
+
+Там находятся итоговые артефакты пайплайна:
+
+* test cases
+* scenarios
+* run results
+* final review report
+
+## Ограничения и допущения
+
+* Проект работает против локального mock API, а не реального backend.
+* Base URL в текущем PoC захардкожен.
+* Пайплайн не пытается автоматически перегенерировать артефакты, если этап или проверка не прошли.
+* В LLM-аудит отправляются не все результаты, а только failed или suspicious.
+
+## Кратко
+
+Идея проекта простая:
+
+* где можно обойтись детерминированным кодом — используется код;
+* где нужен генеративный слой — используется LLM;
+* дорогая модель используется только для test design;
+* дешёвая модель используется для step generation и selective audit.
