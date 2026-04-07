@@ -14,7 +14,14 @@ from agent.llm.step_designer.llm_step_designer import LlmStepDesigner
 from agent.llm.step_designer.scenario_builder import LlmScenarioBuilder
 from agent.report_builder import ScenarioExecutionReportBuilder
 from agent.runner.test_runner import ScenarioRunner
-from agent.llm.result_reviewver.result_review_prefilter import *
+from typing import Any
+
+from agent.llm.result_reviewver.result_review_prefilter import (
+    ScenarioAuditFilter,
+    AuditRoute,
+    AuditFilterDecision,
+    ScenarioRunResult,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -31,7 +38,7 @@ AGENT_DIR = REPO_ROOT / "agent"
 INPUT_DIR = AGENT_DIR / "input"
 OUTPUT_DIR = AGENT_DIR / "output"
 
-CONTEXT_PATH = INPUT_DIR / "conext.md"
+CONTEXT_PATH = INPUT_DIR / "context.md"
 OPENAPI_PATH = INPUT_DIR / "open_api.json"
 
 SPEC_SECTIONS_PATH = INPUT_DIR / "spec_sections.json"
@@ -119,65 +126,6 @@ def build_contract_index(contract: dict[str, Any]) -> dict[tuple[str, str], dict
     return index
 
 
-def build_endpoint_rules_view(spec_endpoint: dict[str, Any]) -> str:
-    views = spec_endpoint.get("views")
-    if isinstance(views, dict):
-        value = views.get("endpoint_rules")
-        if isinstance(value, str) and value.strip():
-            return value.strip()
-
-    endpoint_id = str(spec_endpoint["endpoint_id"]).strip()
-    title = str(spec_endpoint.get("title", "")).strip()
-    method = str(spec_endpoint["method"]).upper().strip()
-    path = str(spec_endpoint["path"]).strip()
-
-    endpoint_rules = spec_endpoint.get("endpoint_rules", [])
-    parameters = spec_endpoint.get("parameters", [])
-    error_responses = spec_endpoint.get("error_responses", [])
-
-    lines: list[str] = [
-        f"Endpoint ID: {endpoint_id}",
-        f"Endpoint: {method} {path}",
-    ]
-
-    if title:
-        lines.append(f"Title: {title}")
-
-    if parameters:
-        lines.append("")
-        lines.append("Parameters:")
-        for item in parameters:
-            if not isinstance(item, dict):
-                continue
-            name = str(item.get("name", "")).strip()
-            description = str(item.get("description", "")).strip()
-            if name and description:
-                lines.append(f"- {name}: {description}")
-            elif name:
-                lines.append(f"- {name}")
-
-    if endpoint_rules:
-        lines.append("")
-        lines.append("Rules:")
-        for rule in endpoint_rules:
-            lines.append(f"- {str(rule).strip()}")
-
-    if error_responses:
-        lines.append("")
-        lines.append("Error responses:")
-        for item in error_responses:
-            if not isinstance(item, dict):
-                continue
-            status_code = item.get("status_code")
-            description = str(item.get("description", "")).strip()
-
-            if status_code is not None and description:
-                lines.append(f"- {status_code}: {description}")
-            elif status_code is not None:
-                lines.append(f"- {status_code}")
-
-    return "\n".join(lines).strip()
-
 
 async def run() -> None:
     if not OPENROUTER_API_KEY:
@@ -238,9 +186,14 @@ async def run() -> None:
     for spec_endpoint in spec_endpoints:
         endpoint_id = str(spec_endpoint["endpoint_id"]).strip()
         endpoint_rules_view = next(
-            item for item in rules_views["endpoint_rules_views"]
-            if item["endpoint_id"] == endpoint_id
+            (item for item in rules_views["endpoint_rules_views"]
+             if item["endpoint_id"] == endpoint_id),
+            None,
         )
+        if endpoint_rules_view is None:
+            raise ValueError(
+                f"No rules view found for endpoint_id={endpoint_id!r}"
+            )
         method = str(spec_endpoint["method"]).upper().strip()
         test_case_path = OUTPUT_DIR / "test_cases" / f"test_cases_{endpoint_id}.json"
         scenario_path = OUTPUT_DIR / "scenarios" / f"scenarios_{endpoint_id}.json"
