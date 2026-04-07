@@ -212,8 +212,28 @@ class LlmTestDesigner:
 
         return "\n".join(parts).strip()
 
+    # HTTP verbs that should never appear as words in a test case title.
+    _HTTP_METHODS: frozenset[str] = frozenset(
+        {"get", "post", "put", "patch", "delete", "head", "options"}
+    )
+
     def _normalize_title(self, value: str) -> str:
         return re.sub(r"\s+", " ", value.strip().lower())
+
+    def _title_contains_http_method(self, title: str) -> bool:
+        """Return True if the title contains any HTTP verb as a standalone word.
+
+        Titles must describe business intent, not transport-level details.
+        """
+        padded = f" {title.lower()} "
+        return any(f" {method} " in padded for method in self._HTTP_METHODS)
+
+    def _title_contains_api_path(self, title: str) -> bool:
+        """Return True if the title contains a raw API path segment.
+
+        Titles must not expose internal URL structure.
+        """
+        return "/" in title
 
     def _post_validate_bundle(
             self,
@@ -226,15 +246,14 @@ class LlmTestDesigner:
                 f"endpointId mismatch: expected {expected_endpoint_id}, got {bundle.endpointId}"
             )
 
-        seen_fingerprints: set[tuple[str, str, str, int | None]] = set()
+        seen_fingerprints: set[tuple[str, str]] = set()
 
         for index, idea in enumerate(bundle.ideas):
 
-            lowered_title = idea.title.lower()
-            if " post " in f" {lowered_title} " or " get " in f" {lowered_title} ":
+            if self._title_contains_http_method(idea.title):
                 raise ValueError(f"ideas[{index}] contains HTTP method in title: {idea.title}")
 
-            if "/users" in idea.title:
+            if self._title_contains_api_path(idea.title):
                 raise ValueError(f"ideas[{index}] contains path in title: {idea.title}")
 
             fingerprint = (
