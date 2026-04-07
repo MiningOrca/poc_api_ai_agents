@@ -1,0 +1,11 @@
+services:
+  wallet-mock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wallet-mock-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./mock_api.py:/app/mock_api.py:ro
+    restart: unless-stopped
