@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-from pydantic import ConfigDict
 
 PLACEHOLDER_PATTERN = re.compile(r"\$\$\{([^}]+)\}")
 EXACT_PLACEHOLDER_PATTERN = re.compile(r"^\$\$\{([^}]+)\}$")
@@ -51,7 +50,7 @@ class AttemptRunResult:
 @dataclass
 class StepRunResult:
     index: int
-    title: str
+    scenario_title: str
     step_name: str
     step_role: str
     step_summary: str
@@ -64,8 +63,6 @@ class StepRunResult:
 
 @dataclass
 class ScenarioRunResult:
-    model_config = ConfigDict(extra='ignore')
-
     title: str
     endpoint_id: str
     passed: bool
@@ -211,7 +208,7 @@ class ScenarioRunner:
 
         step_result = StepRunResult(
             index=step_index,
-            title=str(scenario.get("title", "")),
+            scenario_title=str(scenario.get("title", "")),
             step_name=str(step.get("inputStep", {}).get("stepName", f"step_{step_index}")),
             step_role=str(step.get("stepRole", "")),
             step_summary=str(step["executionDraft"]["stepSummary"]),
@@ -325,7 +322,8 @@ class ScenarioRunner:
 
         try:
             response_json = response.json()
-        except Exception:
+        except Exception as exc:
+            print(f"[step] WARNING: failed to parse response as JSON: {exc}")
             response_text = response.text
 
         expected_status_code = int(expect.get("statusCode", 0))
@@ -661,7 +659,7 @@ class ScenarioRunner:
     ) -> StepRunResult:
         return StepRunResult(
             index=step_index,
-            title=str(scenario.get("title", "")),
+            scenario_title=str(scenario.get("title", "")),
             step_name=str(step.get("inputStep", {}).get("stepName", f"step_{step_index}")),
             step_role=str(step.get("stepRole", "")),
             step_summary=str(step["executionDraft"]["stepSummary"]),
@@ -698,15 +696,13 @@ class ScenarioRunner:
                 )
             )
 
-    @staticmethod
-    def run_tests(input_path, summary_path, output_dir=Path("../output/run_results"), base_url="http://localhost:8000"):
+    def run_tests(self, input_path, output_dir, base_url="http://localhost:8000") -> list[dict[str, Any]]:
         output_dir.mkdir(parents=True, exist_ok=True)
         bundle = json.loads(input_path.read_text(encoding="utf-8"))
         endpoint_id = str(bundle.get("endpointId", "unknown_endpoint"))
         scenarios = bundle.get("scenarios", [])
         if not isinstance(scenarios, list):
             raise ValueError("Input file must contain 'scenarios' as a list")
-        runner = ScenarioRunner()
         all_results: list[dict[str, Any]] = []
         for index, scenario in enumerate(scenarios, start=1):
             if not isinstance(scenario, dict):
@@ -715,6 +711,9 @@ class ScenarioRunner:
 
             scenario_payload = {
                 "endpointId": scenario.get("endpointId", endpoint_id),
+                "caseId": scenario["parentTestCaseId"],
+                "scenarioId": scenario["id"],
+                "id": f"TR-{scenario['id']}",
                 "title": scenario.get("title", f"scenario_{index}"),
                 "steps": scenario.get("steps", []),
             }
@@ -724,24 +723,10 @@ class ScenarioRunner:
             print("=" * 80)
             print(f"[main] running scenario {index}/{len(scenarios)}: {scenario_payload['title']}")
 
-            run_result = runner.run_scenario(
+            run_result = self.run_scenario(
                 base_url=base_url,
                 scenario=scenario_payload,
                 output_path=scenario_output_path,
             )
-            run_result.caseId = scenario["parentTestCaseId"]
-            run_result.scenarioId = scenario["id"]
-            run_result.id = f"TR-{scenario['id']}"
             all_results.append(asdict(run_result))
-        summary_path.write_text(
-            json.dumps(all_results, ensure_ascii=False, indent=2, default=str),
-            encoding="utf-8",
-        )
-        passed_count = sum(1 for item in all_results if item.get("passed") is True)
-        failed_count = len(all_results) - passed_count
-        print("=" * 80)
-        print(f"[main] finished")
-        print(f"[main] total scenarios: {len(all_results)}")
-        print(f"[main] passed: {passed_count}")
-        print(f"[main] failed: {failed_count}")
-        print(f"[main] summary written to: {summary_path}")
+        return all_results

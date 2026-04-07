@@ -230,7 +230,21 @@ async def run() -> None:
 
         save_json(scenario_path, scenario_bundle)
         print("[pipeline] compiling scenarios done")
-        ScenarioRunner().run_tests(scenario_path, summary_path=execution_summary_path)
+        output_dir = OUTPUT_DIR / "run_results"
+        all_results = ScenarioRunner().run_tests(scenario_path, output_dir=output_dir)
+        execution_summary_path.parent.mkdir(parents=True, exist_ok=True)
+        execution_summary_path.write_text(
+            json.dumps(all_results, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
+        passed_count = sum(1 for item in all_results if item.get("passed") is True)
+        failed_count = len(all_results) - passed_count
+        print("=" * 80)
+        print(f"[main] finished")
+        print(f"[main] total scenarios: {len(all_results)}")
+        print(f"[main] passed: {passed_count}")
+        print(f"[main] failed: {failed_count}")
+        print(f"[main] summary written to: {execution_summary_path}")
         print(f"[pipeline] review execution result for {endpoint_id}")
         run_result = TypeAdapter(list[ScenarioRunResult]).validate_python(load_json(execution_summary_path))
         run_report = []

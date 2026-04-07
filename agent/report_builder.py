@@ -103,7 +103,7 @@ class ScenarioExecutionReportBuilder:
         attempt = self._get_primary_attempt(step)
 
         return StepExecutionReport(
-            title=step.title,
+            title=step.scenario_title,
             step_summary=step.step_summary,
             step_role=step.step_role,
             passed=step.passed,
