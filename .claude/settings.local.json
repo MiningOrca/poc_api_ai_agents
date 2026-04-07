@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Users/egorkhalzov/PycharmProjects/APIAgent/*.cfg /Users/egorkhalzov/PycharmProjects/APIAgent/requirements*.txt /Users/egorkhalzov/PycharmProjects/APIAgent/pyproject.toml)",
+      "Bash(PYTHONPATH=. python3:*)",
+      "Bash(python3:*)"
+    ]
+  }
+}

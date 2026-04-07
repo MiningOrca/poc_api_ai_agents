@@ -1,0 +1,25 @@
+{
+  "scenarioId": "SC-CU-001",
+  "verdict": "test_issue",
+  "summary": "Scenario failed because expected duplicate-email conflict was not reached; backend returned 500 instead of 409.",
+  "failureClassification": {
+    "kind": "application_bug",
+    "confidence": "high"
+  },
+  "rootCauseHypotheses": [
+    "Backend duplicate-email path crashes instead of returning documented conflict response."
+  ],
+  "validationAssessment": {
+    "isSufficient": true,
+    "missingChecks": []
+  },
+  "testDesignIssues": [],
+  "recommendedActions": [
+    "Inspect create_user duplicate-email handling.",
+    "Check conflict-path exception mapping."
+  ],
+  "evidence": [
+    "Target step expectedStatusCode=409, actualStatusCode=500",
+    "Failure occurred on step index 1"
+  ]
+}

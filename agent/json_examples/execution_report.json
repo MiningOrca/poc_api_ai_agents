@@ -1,0 +1,58 @@
+{
+  "scenarioId": "SC-CU-001",
+  "title": "Reject creation when email is already taken",
+  "endpointId": "create_user",
+  "passed": false,
+  "startedAtUtc": "2026-04-06T12:00:00Z",
+  "finishedAtUtc": "2026-04-06T12:00:03Z",
+  "failedStepIndex": 1,
+  "steps": [
+    {
+      "index": 0,
+      "title": "Create initial user",
+      "stepRole": "setup",
+      "passed": true,
+      "method": "POST",
+      "path": "/users",
+      "requestBody": {
+        "name": "John",
+        "email": "john@example.com"
+      },
+      "expectedStatusCode": 201,
+      "actualStatusCode": 201,
+      "assertionResults": [
+        {
+          "path": "$.userId",
+          "operator": "exists",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        }
+      ],
+      "responseBody": {
+        "userId": "u-1001",
+        "email": "john@example.com"
+      },
+      "error": null
+    },
+    {
+      "index": 1,
+      "title": "Attempt duplicate creation",
+      "stepRole": "target",
+      "passed": false,
+      "method": "POST",
+      "path": "/users",
+      "requestBody": {
+        "name": "John 2",
+        "email": "john@example.com"
+      },
+      "expectedStatusCode": 409,
+      "actualStatusCode": 500,
+      "assertionResults": [],
+      "responseBody": {
+        "message": "internal error"
+      },
+      "error": "Expected 409, got 500"
+    }
+  ]
+}

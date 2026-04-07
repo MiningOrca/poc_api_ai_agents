@@ -1,0 +1,110 @@
+[
+  {
+    "scenarioId": "SC-CU-SETUP",
+    "isSetupFixture": true,
+    "endpointId": "create_user",
+    "title": "Shared setup: create initial user",
+    "category": "setup",
+    "sourceRefs": [],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create initial user",
+        "endpointId": "create_user",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "John",
+          "email": "john@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "user_id",
+            "sourcePath": "$.userId"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CU-001",
+    "setupRef": "SC-CU-SETUP",
+    "endpointId": "create_user",
+    "title": "Reject creation when email is already taken",
+    "category": "negative",
+    "sourceRefs": ["ER-CU-001"],
+    "expectedStatusCode": 409,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt duplicate creation",
+        "endpointId": "create_user",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "John 2",
+          "email": "john@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CU-002",
+    "endpointId": "create_user",
+    "title": "Create a new user with valid data",
+    "category": "positive",
+    "sourceRefs": ["ER-CU-001"],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "POST valid user data",
+        "endpointId": "create_user",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Alice",
+          "email": "alice@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.email",
+            "operator": "equals",
+            "expected": "alice@example.com"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  }
+]

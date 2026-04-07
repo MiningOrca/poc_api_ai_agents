@@ -1,0 +1,18 @@
+{
+  "generalRules": [
+    {
+      "id": "GR-001",
+      "text": "All requests and responses are JSON.",
+      "sourceRefs": ["context:general"]
+    }
+  ],
+  "rulesByEndpoint": {
+    "create_user": [
+      {
+        "id": "ER-CU-001",
+        "text": "Email must be unique.",
+        "sourceRefs": ["context:create_user"]
+      }
+    ]
+  }
+}

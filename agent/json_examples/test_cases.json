@@ -1,0 +1,25 @@
+{
+  "endpointId": "create_user",
+  "cases": [
+    {
+      "title": "Reject creation when email is already taken",
+      "summary": "Verify that creating a user with an existing email returns conflict.",
+      "category": "negative|positive",
+      "expectedStatusCode": 409,
+      "expectedOutcome": "API rejects duplicate email",
+      "sourceRefs": [
+        "ER-CU-001"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "summary": "Create initial user"
+        },
+        {
+          "endpointId": "create_user",
+          "summary": "Attempt duplicate creation"
+        }
+      ]
+    }
+  ]
+}
