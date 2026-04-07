@@ -1,0 +1,442 @@
+{
+  "review_target": ".",
+  "generated_at": "2026-04-07T00:00:00Z",
+  "files": [
+    {
+      "path": "run_pipeline.py",
+      "summary": "Wildcard import, dead module-level function, large commented-out code blocks, silent StopIteration risk, and a typo in a path constant.",
+      "issues": [
+        {
+          "id": "run-001",
+          "severity": "medium",
+          "category": "weak_module_boundary",
+          "lines": { "start": 17, "end": 17 },
+          "symbol": "wildcard import from result_review_prefilter",
+          "problem": "from agent.llm.result_reviewver.result_review_prefilter import * brings an unknown set of names into the module namespace, including Any (used by load_json/save_json at lines 46 and 53), ScenarioAuditFilter, AuditRoute, AuditFilterDecision, and ScenarioRunResult. None of these are explicitly listed.",
+          "impact": "A reader cannot determine which names come from where without inspecting the imported module. New names added to result_review_prefilter silently enter this module's namespace. Type Any appears to be available despite no visible import.",
+          "fix_instructions": [
+            "Replace the wildcard import with explicit imports: from agent.llm.result_reviewver.result_review_prefilter import ScenarioAuditFilter, AuditRoute, AuditFilterDecision, ScenarioRunResult.",
+            "Add from typing import Any at the top of the file to make the Any dependency explicit."
+          ],
+          "acceptance_criteria": [
+            "No wildcard imports remain in the file.",
+            "All names used from result_review_prefilter are listed explicitly.",
+            "Any is imported from typing."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "run-002",
+          "severity": "high",
+          "category": "dead_code",
+          "lines": { "start": 122, "end": 179 },
+          "symbol": "build_endpoint_rules_view",
+          "problem": "Module-level function build_endpoint_rules_view is defined but never called. Inside run(), the variable endpoint_rules_view is assigned via next(item for item in rules_views[\"endpoint_rules_views\"] …) at line 240, not by calling this function.",
+          "impact": "Dead code misleads readers into thinking the function participates in the pipeline. Its 58 lines also duplicate logic already present in RulesViewsBuilder._build_endpoint_rules_view.",
+          "fix_instructions": [
+            "Delete lines 122-179 (the entire build_endpoint_rules_view function).",
+            "Verify no other call sites exist with a project-wide search for build_endpoint_rules_view."
+          ],
+          "acceptance_criteria": [
+            "build_endpoint_rules_view does not appear anywhere in the file.",
+            "run() continues to use the next(…) lookup from rules_views."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "run-004",
+          "severity": "medium",
+          "category": "debuggability",
+          "lines": { "start": 240, "end": 243 },
+          "symbol": "run",
+          "problem": "endpoint_rules_view = next(item for item in rules_views[\"endpoint_rules_views\"] if item[\"endpoint_id\"] == endpoint_id) raises a bare StopIteration when no matching endpoint is found. StopIteration carries no message about which endpoint_id was missing.",
+          "impact": "A missing endpoint produces a cryptic exception with no actionable information. Debugging requires setting a breakpoint or adding temporary prints.",
+          "fix_instructions": [
+            "Replace with: endpoint_rules_view = next((item for item in rules_views[\"endpoint_rules_views\"] if item[\"endpoint_id\"] == endpoint_id), None).",
+            "Add: if endpoint_rules_view is None: raise ValueError(f\"No rules view found for endpoint_id={endpoint_id!r}\")."
+          ],
+          "acceptance_criteria": [
+            "A missing endpoint_id raises ValueError with the endpoint id in the message.",
+            "No bare StopIteration can escape this lookup."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "run-005",
+          "severity": "low",
+          "category": "bad_naming",
+          "lines": { "start": 34, "end": 34 },
+          "symbol": "CONTEXT_PATH",
+          "problem": "CONTEXT_PATH = INPUT_DIR / \"conext.md\" contains a typo: \"conext\" instead of \"context\". The misspelling propagates to the FileNotFoundError message in ensure_source_inputs().",
+          "impact": "Every reader second-guesses whether \"conext\" is intentional. Error messages referencing the path look like a bug.",
+          "fix_instructions": [
+            "Rename the file on disk from conext.md to context.md.",
+            "Update the constant: CONTEXT_PATH = INPUT_DIR / \"context.md\"."
+          ],
+          "acceptance_criteria": [
+            "The string \"conext\" does not appear anywhere in the file.",
+            "CONTEXT_PATH points to the correctly named file."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": false,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "runner/test_runner.py",
+      "summary": "A Pydantic ConfigDict on a plain dataclass does nothing, a bare except discards the JSON parse error, StepRunResult.title holds the scenario title (not the step title), and run_tests conflates file I/O, orchestration, ID mutation, and stats printing.",
+      "issues": [
+        {
+          "id": "runner-001",
+          "severity": "medium",
+          "category": "misleading_abstraction",
+          "lines": { "start": 65, "end": 68 },
+          "symbol": "ScenarioRunResult.model_config",
+          "problem": "model_config = ConfigDict(extra='ignore') is assigned on a @dataclass. Pydantic's ConfigDict is only meaningful on Pydantic BaseModel subclasses. On a plain Python dataclass it is an inert class attribute that has no effect on serialization, validation, or field behaviour.",
+          "impact": "Readers familiar with Pydantic expect ConfigDict to enforce validation rules; here it silently does nothing. The class also imports ConfigDict from pydantic, adding a misleading dependency.",
+          "fix_instructions": [
+            "Remove the line model_config = ConfigDict(extra='ignore') from ScenarioRunResult.",
+            "Remove the ConfigDict import from pydantic at the top of the file if it is not used elsewhere."
+          ],
+          "acceptance_criteria": [
+            "ScenarioRunResult has no model_config attribute.",
+            "ConfigDict is not imported unless used by another symbol in the file."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "runner-002",
+          "severity": "high",
+          "category": "debuggability",
+          "lines": { "start": 326, "end": 329 },
+          "symbol": "ScenarioRunner._run_step_attempt",
+          "problem": "The JSON parse block `try: response_json = response.json() except Exception: response_text = response.text` silently discards the parse exception. The caller receives no indication that JSON parsing failed; the error object is thrown away.",
+          "impact": "When an endpoint returns non-JSON (e.g. HTML error page), the response is silently treated as plain text. The assertion mismatch that follows gives no clue that a parse failure occurred upstream, making debugging significantly harder.",
+          "fix_instructions": [
+            "Capture the exception: except Exception as exc:.",
+            "Store it on attempt_result.error or log it: e.g. add a local variable parse_error = str(exc) and use it when constructing attempt_result below, or print a warning immediately."
+          ],
+          "acceptance_criteria": [
+            "A JSON parse failure is visible in the run output — either in attempt_result.error, a print statement, or a log entry.",
+            "The exception is never silently discarded."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "runner-003",
+          "severity": "medium",
+          "category": "bad_naming",
+          "lines": { "start": 52, "end": 53 },
+          "symbol": "StepRunResult.title",
+          "problem": "StepRunResult.title is populated with str(scenario.get(\"title\", \"\")) in both _run_step (line 214) and _build_not_executed_step_result (line 662). This is the scenario title, not the step's own title. The field name title on a StepRunResult implies it describes the step.",
+          "impact": "Callers reading step.title expect a step-level label; they get the parent scenario's title. In report_builder.py, step.title is used as StepExecutionReport.title — the report header for each step therefore shows the scenario title rather than the step's identity.",
+          "fix_instructions": [
+            "Rename the field in StepRunResult from title to scenario_title.",
+            "Update all construction sites in test_runner.py (lines 214, 662).",
+            "Update the read site in report_builder.py (StepExecutionReport construction, _build_step method)."
+          ],
+          "acceptance_criteria": [
+            "StepRunResult has a field named scenario_title, not title.",
+            "No code reads step.title anywhere in the project."
+          ],
+          "minimal_change_scope": "multi_file",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "runner-004",
+          "severity": "medium",
+          "category": "mixed_responsibility",
+          "lines": { "start": 701, "end": 748 },
+          "symbol": "ScenarioRunner.run_tests",
+          "problem": "run_tests is a @staticmethod that: (1) reads and parses a JSON file from disk, (2) iterates and dispatches scenarios, (3) creates a new ScenarioRunner() instance internally (while already being a method of ScenarioRunner), (4) mutates result objects post-hoc (run_result.caseId = …, run_result.scenarioId = …, run_result.id = … at lines 732-734), (5) writes the summary file, (6) prints pass/fail statistics. The default parameter output_dir=Path(\"../output/run_results\") is a relative path whose meaning depends on the working directory at call time.",
+          "impact": "The method is untestable in isolation because it mixes file I/O with orchestration logic. The relative-path default is fragile. Post-hoc mutation of a returned dataclass result is an unexpected side-effect that callers may not anticipate.",
+          "fix_instructions": [
+            "Remove the relative-path default: require callers to pass output_dir explicitly.",
+            "Move statistics printing and summary writing to the caller (run_pipeline.py already wraps this call).",
+            "Set caseId, scenarioId, and id before calling run_scenario, or accept them as parameters to run_scenario, rather than mutating after the fact.",
+            "Consider whether run_tests belongs on ScenarioRunner at all, or should be a module-level function in run_pipeline.py."
+          ],
+          "acceptance_criteria": [
+            "run_tests (or its replacement) has no relative Path defaults.",
+            "Result objects are not mutated after being returned from run_scenario.",
+            "A new ScenarioRunner() is not instantiated inside a ScenarioRunner method."
+          ],
+          "minimal_change_scope": "multi_file",
+          "safe_to_apply_independently": false,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "extractors/build_spec_sections.py",
+      "summary": "_build_rules_only_view and _build_contract_view duplicate ~30 lines of header/parameters/error formatting, and _parse_endpoint_chunk is an 80-line method mixing five distinct concerns.",
+      "issues": [
+        {
+          "id": "spec-001",
+          "severity": "medium",
+          "category": "duplication",
+          "lines": { "start": 431, "end": 512 },
+          "symbol": "_build_rules_only_view, _build_contract_view",
+          "problem": "_build_rules_only_view (lines 431-467) and _build_contract_view (lines 469-512) both open with identical code to build endpoint/title/parameters lines and close with identical code for error_responses. Only the middle section differs (rules vs. success_status_code + JSON examples). Approximately 30 lines are duplicated verbatim.",
+          "impact": "A formatting change to the endpoint header or error block must be applied in both methods. Divergence between the two is likely over time and already present (rules_only uses 'Rules:' section, contract_view does not).",
+          "fix_instructions": [
+            "Extract the shared opening into a private helper: _build_endpoint_header_lines(self, endpoint) -> list[str] that appends method/path, title, and parameters.",
+            "Extract the shared error block into: _build_error_response_lines(self, endpoint) -> list[str].",
+            "Call these helpers from both _build_rules_only_view and _build_contract_view, inserting the view-specific lines between them."
+          ],
+          "acceptance_criteria": [
+            "The f\"Endpoint: {method} {path}\" construction appears exactly once in the class.",
+            "The parameters-formatting loop appears exactly once in the class.",
+            "The error_responses-formatting loop appears exactly once in the class."
+          ],
+          "minimal_change_scope": "file_wide",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "spec-002",
+          "severity": "medium",
+          "category": "function_too_large",
+          "lines": { "start": 184, "end": 264 },
+          "symbol": "_parse_endpoint_chunk",
+          "problem": "The 80-line method _parse_endpoint_chunk performs five distinct operations: joining the raw block, parsing the heading, routing each line into section buffers via a multi-branch loop, assembling the endpoint dict, and calling three view builders. This makes each concern difficult to read or modify in isolation.",
+          "impact": "Any change to section routing requires reading the full loop to avoid regressions. The method cannot be tested for individual concerns without executing all five steps.",
+          "fix_instructions": [
+            "Extract the section-routing loop (lines 201-230) into a private method: _route_lines_into_sections(self, lines: list[str]) -> dict[str, list[str]].",
+            "_parse_endpoint_chunk then calls this helper and focuses on heading parsing, dict assembly, and view calls — reducing it to ~35 lines."
+          ],
+          "acceptance_criteria": [
+            "_parse_endpoint_chunk is 40 lines or fewer.",
+            "A new _route_lines_into_sections method exists and handles all section-label detection and buffer accumulation."
+          ],
+          "minimal_change_scope": "file_wide",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "extractors/build_rules_views.py",
+      "summary": "Both _parse_parameters and _parse_error_responses declare the result variable twice in the same function scope due to two separate early-return branches, obscuring the control flow.",
+      "issues": [
+        {
+          "id": "rules-001",
+          "severity": "medium",
+          "category": "complex_control_flow",
+          "lines": { "start": 97, "end": 173 },
+          "symbol": "_parse_parameters, _parse_error_responses",
+          "problem": "Both _parse_parameters (lines 97-134) and _parse_error_responses (lines 147-173) declare result: list[…] = [] twice in the same function scope — once inside an early-return branch and once at the fallback path. The two code paths that handle structured list input vs. raw block text are collapsed into one function body, forcing readers to track which branch is active.",
+          "impact": "The duplicated declaration makes the two code paths look connected when they are mutually exclusive. Static analysis tools (mypy, pylint) flag the redeclaration. The fallback path at lines 120-133 and 168-174 silently operates even if the structured branch is expected.",
+          "fix_instructions": [
+            "In _parse_parameters: extract the structured-list branch into _parse_parameters_from_list(self, parameters: list) -> list[dict[str, str]] and the block-text branch into _parse_parameters_from_block(self, block: str | None) -> list[dict[str, str]]. The public method selects between them.",
+            "Apply the same split to _parse_error_responses."
+          ],
+          "acceptance_criteria": [
+            "result is declared exactly once per execution path in each method.",
+            "No variable name is type-annotated twice in the same function scope."
+          ],
+          "minimal_change_scope": "file_wide",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "llm/step_designer/llm_step_designer.py",
+      "summary": "A camelCase parameter name breaks naming consistency, a domain-specific path-sniff hidden inside a generic prompt builder changes behaviour silently, and _extract_json_payload is copy-pasted identically across three LLM classes.",
+      "issues": [
+        {
+          "id": "step-001",
+          "severity": "low",
+          "category": "bad_naming",
+          "lines": { "start": 64, "end": 64 },
+          "symbol": "LlmStepDesigner.generate_step_execution_draft — contractContext parameter",
+          "problem": "The parameter contractContext uses camelCase, violating PEP 8. Every other parameter in the same method signature (endpoint_id, test_case, available_context, output_context_plan, prior_step_summary, remaining_context) uses snake_case.",
+          "impact": "Callers must remember the camelCase exception. Linters and IDEs flag the inconsistency.",
+          "fix_instructions": [
+            "Rename the parameter to contract_context throughout generate_step_execution_draft.",
+            "Update the two internal references at the _build_user_prompt call (line 77) and the _post_validate_draft call (line 103).",
+            "Update the call site in scenario_builder.py (line 98: contractContext=step_request[\"contractContext\"]) to use contract_context=."
+          ],
+          "acceptance_criteria": [
+            "No camelCase parameter names remain in generate_step_execution_draft.",
+            "All call sites use contract_context as the keyword."
+          ],
+          "minimal_change_scope": "multi_file",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "step-002",
+          "severity": "high",
+          "category": "hidden_side_effect",
+          "lines": { "start": 279, "end": 281 },
+          "symbol": "LlmStepDesigner._build_user_prompt",
+          "problem": "if \"deposit\" in str(contract.get(\"path\", \"\")): parts.append(…) inside a generic prompt builder silently injects a domain-specific rule based on the endpoint path name. The caller has no way to know this rule exists or is being applied.",
+          "impact": "The method's output changes based on a string-match against endpoint naming conventions. A deposit-like endpoint with a different name gets no special treatment. The rule is invisible at call sites, making the prompt output surprising to debug.",
+          "fix_instructions": [
+            "Remove the conditional block (lines 279-281) from _build_user_prompt.",
+            "If the domain hint is still needed, expose a hints: list[str] | None = None parameter on _build_user_prompt and pass it explicitly from the caller that knows the endpoint domain context.",
+            "Alternatively, pass a domain_notes: str | None argument to generate_step_execution_draft and forward it through."
+          ],
+          "acceptance_criteria": [
+            "_build_user_prompt contains no string checks against contract[\"path\"].",
+            "Any domain-specific prompt additions are passed explicitly by the caller."
+          ],
+          "minimal_change_scope": "file_wide",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "step-003",
+          "severity": "low",
+          "category": "duplication",
+          "lines": { "start": 546, "end": 554 },
+          "symbol": "LlmStepDesigner._extract_json_payload",
+          "problem": "The static method _extract_json_payload (lines 546-554) is copy-pasted verbatim in LlmTestDesigner (llm/test_designer/llm_test_designer.py lines 252-260) and LlmExecutionAuditor (llm/result_reviewver/llm_result_review.py lines 225-232). All three implementations are byte-for-byte identical.",
+          "impact": "Any fix to markdown-fence stripping logic must be applied in three places. The duplication grows with each new LLM class.",
+          "fix_instructions": [
+            "Move the implementation to llm/prompt_util.py as a module-level function: def extract_json_payload(text: str) -> str.",
+            "In each of the three LLM classes, replace the private static method with a call to the shared function.",
+            "Remove the three private _extract_json_payload definitions."
+          ],
+          "acceptance_criteria": [
+            "One canonical extract_json_payload exists in prompt_util.py.",
+            "_extract_json_payload does not appear as a method in any LLM class."
+          ],
+          "minimal_change_scope": "multi_file",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "llm/step_designer/helpers/compiled_scenario_builder.py",
+      "summary": "_resolve_expected_status_code is a private method that is defined but never called; the live code path reads the status code directly from the step dict.",
+      "issues": [
+        {
+          "id": "csb-001",
+          "severity": "medium",
+          "category": "dead_code",
+          "lines": { "start": 124, "end": 134 },
+          "symbol": "CompiledScenarioBuilder._resolve_expected_status_code",
+          "problem": "_resolve_expected_status_code is defined as a private method but is never called. accept_step_draft reads step[\"stepStatusCode\"] directly at line 65 rather than calling this method.",
+          "impact": "The dead method implies there is a resolution mechanism being used; readers may trust it is invoked. It also duplicates some logic from _resolve_success_status_code (lines 136-154) that is actually called.",
+          "fix_instructions": [
+            "Delete lines 124-134 (_resolve_expected_status_code).",
+            "Confirm no call site exists with a search for _resolve_expected_status_code in the project."
+          ],
+          "acceptance_criteria": [
+            "_resolve_expected_status_code does not appear in the file.",
+            "accept_step_draft continues to read step[\"stepStatusCode\"] directly."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "llm/test_designer/llm_test_designer.py",
+      "summary": "seen_fingerprints carries a wrong type annotation (4-tuple annotated, 2-tuple stored), and _post_validate_bundle encodes hardcoded HTTP method strings and a specific API path as opaque string checks.",
+      "issues": [
+        {
+          "id": "test-001",
+          "severity": "medium",
+          "category": "unclear_contract",
+          "lines": { "start": 229, "end": 229 },
+          "symbol": "_post_validate_bundle — seen_fingerprints",
+          "problem": "seen_fingerprints: set[tuple[str, str, str, int | None]] = set() annotates a set of 4-tuples, but the actual tuples stored are 2-tuples of (str, str): fingerprint = (self._normalize_title(idea.title), idea.category.value) at lines 241-244.",
+          "impact": "Type checkers (mypy) will flag mismatched tuple lengths. Readers inferring the deduplication key from the annotation will arrive at a wrong mental model.",
+          "fix_instructions": [
+            "Correct the annotation to: seen_fingerprints: set[tuple[str, str]] = set()."
+          ],
+          "acceptance_criteria": [
+            "The annotation matches the actual tuple shape: set[tuple[str, str]].",
+            "mypy reports no type error on this line."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        },
+        {
+          "id": "test-002",
+          "severity": "medium",
+          "category": "hidden_side_effect",
+          "lines": { "start": 234, "end": 238 },
+          "symbol": "_post_validate_bundle",
+          "problem": "\" post \" in f\" {lowered_title} \" or \" get \" in f\" {lowered_title} \" (line 234) and \"/users\" in idea.title (line 237) are hardcoded string checks in a generic validation method. They cover only two HTTP methods and one specific path segment; other methods (PUT, PATCH, DELETE) and other paths are not caught.",
+          "impact": "The validation silently has inconsistent coverage depending on which strings are hardcoded. Adding a new endpoint path requires editing method internals. The intent (reject titles that expose transport details) is buried in the implementation.",
+          "fix_instructions": [
+            "Extract the HTTP method check into a named helper: _title_contains_http_method(title: str) -> bool, and extend it to cover all common HTTP verbs rather than just GET and POST.",
+            "Extract the path check into: _title_contains_api_path(title: str) -> bool with a comment explaining the intent.",
+            "Call these helpers from _post_validate_bundle with descriptive error messages."
+          ],
+          "acceptance_criteria": [
+            "The magic strings \" post \", \" get \", and \"/users\" do not appear inline in _post_validate_bundle.",
+            "Named helper methods exist that clearly express what they are checking and why."
+          ],
+          "minimal_change_scope": "file_wide",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "path": "llm/result_reviewver/llm_result_review.py",
+      "summary": "_truncate_text is defined but never called; _truncate_jsonish is the method actually used for size-limiting.",
+      "issues": [
+        {
+          "id": "audit-001",
+          "severity": "low",
+          "category": "dead_code",
+          "lines": { "start": 143, "end": 148 },
+          "symbol": "LlmExecutionAuditor._truncate_text",
+          "problem": "_truncate_text is defined but never called within the class. _project_step uses _truncate_jsonish; no code path calls _truncate_text.",
+          "impact": "Dead method inflates the class. Readers may assume response text is being truncated somewhere when it is not.",
+          "fix_instructions": [
+            "Delete lines 143-148 (_truncate_text).",
+            "Confirm no call site exists with a search for _truncate_text in the project."
+          ],
+          "acceptance_criteria": [
+            "_truncate_text does not appear in the file.",
+            "_truncate_jsonish remains and is the sole truncation helper."
+          ],
+          "minimal_change_scope": "local",
+          "safe_to_apply_independently": true,
+          "depends_on_issue_ids": [],
+          "confidence": "high"
+        }
+      ]
+    }
+  ]
+}

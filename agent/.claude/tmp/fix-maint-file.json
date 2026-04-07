@@ -1,0 +1,33 @@
+{
+  "review_target": ".",
+  "file": {
+    "path": "llm/result_reviewver/llm_result_review.py",
+    "summary": "_truncate_text is defined but never called; _truncate_jsonish is the method actually used for size-limiting.",
+    "issues": [
+      {
+        "id": "audit-001",
+        "severity": "low",
+        "category": "dead_code",
+        "lines": {
+          "start": 143,
+          "end": 148
+        },
+        "symbol": "LlmExecutionAuditor._truncate_text",
+        "problem": "_truncate_text is defined but never called within the class. _project_step uses _truncate_jsonish; no code path calls _truncate_text.",
+        "impact": "Dead method inflates the class. Readers may assume response text is being truncated somewhere when it is not.",
+        "fix_instructions": [
+          "Delete lines 143-148 (_truncate_text).",
+          "Confirm no call site exists with a search for _truncate_text in the project."
+        ],
+        "acceptance_criteria": [
+          "_truncate_text does not appear in the file.",
+          "_truncate_jsonish remains and is the sole truncation helper."
+        ],
+        "minimal_change_scope": "local",
+        "safe_to_apply_independently": true,
+        "depends_on_issue_ids": [],
+        "confidence": "high"
+      }
+    ]
+  }
+}
