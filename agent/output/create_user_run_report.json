@@ -1,0 +1,718 @@
+[
+  {
+    "title": "Create user with valid name and email",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.589676+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-1",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.691847+00:00",
+    "steps": [
+      {
+        "title": "Create user with valid name and email",
+        "step_summary": "Create user with name '$${random_str_name}' and email '$${random_email_user}'",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_7710d9755b@example.com",
+            "name": "cXjbR4DH9l3e"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "cXjbR4DH9l3e",
+            "email": "qa_7710d9755b@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_7710d9755b@example.com",
+              "actual": "qa_7710d9755b@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "cXjbR4DH9l3e",
+              "actual": "cXjbR4DH9l3e",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "skip_clean",
+    "audit_reasons": [
+      "clean_deterministic_pass"
+    ],
+    "audit": null
+  },
+  {
+    "title": "Create user with name of exactly 1 character",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.693767+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-2",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.734304+00:00",
+    "steps": [
+      {
+        "title": "Create user with name of exactly 1 character",
+        "step_summary": "Create user with name of exactly 1 character",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_df1e9d9e1f@example.com",
+            "name": "A"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "A",
+            "email": "qa_df1e9d9e1f@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_df1e9d9e1f@example.com",
+              "actual": "qa_df1e9d9e1f@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "A",
+              "actual": "A",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "skip_clean",
+    "audit_reasons": [
+      "clean_deterministic_pass"
+    ],
+    "audit": null
+  },
+  {
+    "title": "Create user with name of exactly 100 characters",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.735399+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-3",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.773359+00:00",
+    "steps": [
+      {
+        "title": "Create user with name of exactly 100 characters",
+        "step_summary": "Create user with a name of exactly 100 characters",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_bae9551ed7@example.com",
+            "name": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789",
+            "email": "qa_bae9551ed7@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_bae9551ed7@example.com",
+              "actual": "qa_bae9551ed7@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789",
+              "actual": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "skip_clean",
+    "audit_reasons": [
+      "clean_deterministic_pass"
+    ],
+    "audit": null
+  },
+  {
+    "title": "Create user with name exceeding 100 characters",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.774586+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-4",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.815595+00:00",
+    "steps": [
+      {
+        "title": "Create user with name exceeding 100 characters",
+        "step_summary": "Create user with a name exceeding 100 characters",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_6e6f690d69@example.com",
+            "name": "This name is intentionally designed to be longer than one hundred characters to test the validation logic of the user creation endpoint."
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "name",
+                "message": "String should have at most 100 characters"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario successfully validates that a name exceeding 100 characters triggers a 400 Bad Request. The response includes a specific error message pointing to the 'name' field validation failure.",
+      "reasons": [
+        "Target step correctly matched the expected 400 status code.",
+        "Response validation confirmed the presence of an error object and specific field-level error details.",
+        "The error message explicitly mentions the character limit constraint, confirming the correct business logic was triggered."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": null,
+      "recommendedAction": "rerun_scenario",
+      "recommendedPriority": "low",
+      "followUpChecks": []
+    }
+  },
+  {
+    "title": "Create user with empty name",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.817191+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-5",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.863472+00:00",
+    "steps": [
+      {
+        "title": "Create user with empty name",
+        "step_summary": "Create user with an empty name string",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_1c76beeacf@example.com",
+            "name": ""
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "name",
+                "message": "String should have at least 1 character"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario validates that an empty name triggers a 400 error. However, it only checks for the presence of an error field without asserting the specific error message or structure in the response body.",
+      "reasons": [
+        "Target step uses required_fields_only assertion strength.",
+        "No explicit field-level assertions were performed on the error details.",
+        "The business logic validation is shallow despite the correct status code."
+      ],
+      "missingAssertions": [
+        "Assertion on the specific error message content (e.g., 'String should have at least 1 character')",
+        "Assertion on the specific field causing the error ('name')"
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add explicit field assertions for the error message and the target field in the response body."
+      ]
+    }
+  },
+  {
+    "title": "Create user with missing name field",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.863931+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-6",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.884678+00:00",
+    "steps": [
+      {
+        "title": "Create user with missing name field",
+        "step_summary": "Create user with email $${random_email_user} and missing name field",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_bef9f4087c@example.com"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "name",
+                "message": "Field required"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario successfully validates a negative test case where a missing required field triggers a 400 Bad Request. The response includes an error object and specific details identifying the missing 'name' field.",
+      "reasons": [
+        "Target step correctly matched the expected 400 status code.",
+        "Response validation confirmed the presence of an error field.",
+        "The response body explicitly details the specific validation failure for the 'name' field."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": null,
+      "recommendedAction": "rerun_scenario",
+      "recommendedPriority": "low",
+      "followUpChecks": []
+    }
+  },
+  {
+    "title": "Create user with invalid email format",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.885111+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-7",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.905918+00:00",
+    "steps": [
+      {
+        "title": "Create user with invalid email format",
+        "step_summary": "Create user with invalid email format 'invalid-email'",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "invalid-email",
+            "name": "Cg6RnecWmdlM"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "email",
+                "message": "value is not a valid email address: An email address must have an @-sign."
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario validates that an invalid email returns a 400 status and an error field. However, it lacks explicit field-level assertions to verify the specific error message content or the structure of the details object.",
+      "reasons": [
+        "Assertion strength is limited to required fields only.",
+        "No explicit field assertions were performed on the error message or details content.",
+        "The business logic validation is shallow despite the correct status code."
+      ],
+      "missingAssertions": [
+        "Assertion of the specific error message string in the 'details' array",
+        "Assertion of the 'error' field value"
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add explicit assertions for the error message text in the response details",
+        "Verify that the error object structure remains consistent across different validation failures"
+      ]
+    }
+  },
+  {
+    "title": "Create user with missing email field",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.906329+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-8",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.926114+00:00",
+    "steps": [
+      {
+        "title": "Create user with missing email field",
+        "step_summary": "Create user without the email field",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "name": "ll5YTmDwhQ0V"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "email",
+                "message": "Field required"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a negative case for a missing email field. While the status code and error presence were verified, no explicit field-level assertions were performed on the error details.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No explicit field assertions are present to validate the specific error message content.",
+        "The business logic validation is shallow despite the correct status code."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the 'details' array content to ensure the error specifically points to the 'email' field."
+      ],
+      "suspectedRootCause": "Test design focuses on status code and existence of error object rather than specific error payload accuracy.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify that the error message 'Field required' is explicitly asserted in the response body."
+      ]
+    }
+  },
+  {
+    "title": "Create user with duplicate email",
+    "endpoint_id": "create_user",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:13:48.926534+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-CREATE-USER-9",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:13:48.951827+00:00",
+    "steps": [
+      {
+        "title": "Create user with duplicate email",
+        "step_summary": "Create user with email $${random_email_user1}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_451358f526@example.com",
+            "name": "VqyPxlNgksP0"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "VqyPxlNgksP0",
+            "email": "qa_451358f526@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_451358f526@example.com",
+              "actual": "qa_451358f526@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Create user with duplicate email",
+        "step_summary": "Create user with duplicate email $${email}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_451358f526@example.com",
+            "name": "rs8BcoYYE39p"
+          },
+          "expected_status_code": 409,
+          "actual_status_code": 409,
+          "response_json": {
+            "error": "Email already exists",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario successfully validates a 409 Conflict when creating a user with a duplicate email. However, the target step lacks explicit field-level assertions, relying only on the presence of required fields.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No explicit field assertions were performed on the error response body.",
+        "The business logic outcome (the specific error message) is not strictly verified via assertions."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message content (e.g., checking if error equals 'Email already exists')",
+        "Validation of the 'details' field present in the response summary"
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add explicit field assertions to the target step to verify the error message text matches the expected conflict reason."
+      ]
+    }
+  }
+]

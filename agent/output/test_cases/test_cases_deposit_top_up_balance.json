@@ -1,0 +1,303 @@
+{
+  "endpointId": "deposit_top_up_balance",
+  "ideas": [
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-1",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit valid amount to existing user",
+      "category": "positive",
+      "mode": "chain",
+      "sourceRefs": [
+        "userId: required, must refer to an existing user",
+        "amount: required, number > 0, up to two decimal places",
+        "currency: currently only \"EUR\" is supported",
+        "200"
+      ],
+      "setupReason": "A user must exist before depositing; no pre-existing user is guaranteed in initial state.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-2",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with non-existent userId",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "userId: required, must refer to an existing user",
+        "404: user not found"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 404,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-3",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with zero amount",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: required, number > 0",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the zero-amount error from a 404.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-4",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with negative amount",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: required, number > 0",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the negative-amount error from a 404.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-5",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with unsupported currency",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "currency: currently only \"EUR\" is supported",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the currency error from a 404.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-6",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with wrong amount format (more than two decimal places)",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: required, number > 0, up to two decimal places",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the format error from a 404.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-7",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with missing userId field",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "userId: required",
+        "400: invalid data"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-8",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with missing amount field",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: required",
+        "400: invalid data"
+      ],
+      "setupReason": "A valid user must exist to isolate the missing-amount error from a 404.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-9",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with minimum valid amount (0.01)",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: required, number > 0, up to two decimal places"
+      ],
+      "setupReason": "A valid user must exist to test the minimum boundary amount.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-DEPOSIT-TOP-UP-BALANCE-10",
+      "endpointId": "deposit_top_up_balance",
+      "title": "Deposit with amount having exactly two decimal places",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: required, number > 0, up to two decimal places"
+      ],
+      "setupReason": "A valid user must exist to test the two-decimal-place boundary.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "title": "Transfer with negative amount",
+  "endpoint_id": "transfer_between_users",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:16:42.323414+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-10",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:16:42.342295+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {},
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Transfer with negative amount",
+      "step_name": "target_1_transfer_between_users",
+      "step_role": "target",
+      "step_summary": "Transfer -10.00 EUR from $${random_str_senderId} to $${random_str_receiverId}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": -10.0,
+            "currency": "EUR",
+            "receiverId": "8pLnpeokTqRZ",
+            "senderId": "HHp0JV8ywEmA"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must be greater than 0"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

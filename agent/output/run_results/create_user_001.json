@@ -1,0 +1,72 @@
+{
+  "title": "Create user with valid name and email",
+  "endpoint_id": "create_user",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:13:48.589676+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-CREATE-USER-1",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:13:48.691847+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {},
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Create user with valid name and email",
+      "step_name": "target_1_create_user",
+      "step_role": "target",
+      "step_summary": "Create user with name '$${random_str_name}' and email '$${random_email_user}'",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_7710d9755b@example.com",
+            "name": "cXjbR4DH9l3e"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_7710d9755b@example.com",
+              "actual": "qa_7710d9755b@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "cXjbR4DH9l3e",
+              "actual": "cXjbR4DH9l3e",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "cXjbR4DH9l3e",
+            "email": "qa_7710d9755b@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

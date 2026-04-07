@@ -1,0 +1,610 @@
+{
+  "endpointId": "create_user",
+  "scenarios": [
+    {
+      "title": "Create user with valid name and email",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 201,
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "email: required, string, must be unique in the system and have a valid email format",
+        "Success response code: 201"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with name '$${random_str_name}' and email '$${random_email_user}'",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_name}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_name}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-1",
+      "id": "TS-CREATE-USER-1"
+    },
+    {
+      "title": "Create user with name of exactly 1 character",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 201,
+      "sourceRefs": [
+        "name: required, string 1–100 characters"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with name of exactly 1 character",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "A"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "A"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "userId",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "A"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-2",
+      "id": "TS-CREATE-USER-2"
+    },
+    {
+      "title": "Create user with name of exactly 100 characters",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 201,
+      "sourceRefs": [
+        "name: required, string 1–100 characters"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with a name of exactly 100 characters",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-3",
+      "id": "TS-CREATE-USER-3"
+    },
+    {
+      "title": "Create user with name exceeding 100 characters",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with a name exceeding 100 characters",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "This name is intentionally designed to be longer than one hundred characters to test the validation logic of the user creation endpoint."
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-4",
+      "id": "TS-CREATE-USER-4"
+    },
+    {
+      "title": "Create user with empty name",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with an empty name string",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": ""
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-5",
+      "id": "TS-CREATE-USER-5"
+    },
+    {
+      "title": "Create user with missing name field",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with email $${random_email_user} and missing name field",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-6",
+      "id": "TS-CREATE-USER-6"
+    },
+    {
+      "title": "Create user with invalid email format",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "email: required, string, must be unique in the system and have a valid email format",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with invalid email format 'invalid-email'",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "invalid-email",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-7",
+      "id": "TS-CREATE-USER-7"
+    },
+    {
+      "title": "Create user with missing email field",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "email: required, string, must be unique in the system and have a valid email format",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user without the email field",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-8",
+      "id": "TS-CREATE-USER-8"
+    },
+    {
+      "title": "Create user with duplicate email",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 409,
+      "sourceRefs": [
+        "email: required, string, must be unique in the system and have a valid email format",
+        "409: email already exists"
+      ],
+      "setupReason": "An existing user with the same email must be created first to trigger the duplicate email conflict.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "email",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create user with email $${random_email_user1}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user1}",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user1}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "email",
+                "sourcePath": "$.email"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user1}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "target",
+            "stepName": "target_2_create_user",
+            "consumesContext": [
+              "email"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Create user with duplicate email $${email}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${email}",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 409,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-CREATE-USER-9",
+      "id": "TS-CREATE-USER-9"
+    }
+  ]
+}

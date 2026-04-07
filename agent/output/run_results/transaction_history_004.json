@@ -1,0 +1,51 @@
+{
+  "title": "Get transaction history with non-existent userId",
+  "endpoint_id": "transaction_history",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:18:42.549596+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSACTION-HISTORY-4",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:18:42.572384+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {},
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Get transaction history with non-existent userId",
+      "step_name": "target_1_transaction_history",
+      "step_role": "target",
+      "step_summary": "Get transaction history for a non-existent userId 'non_existent_user_123'",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/non_existent_user_123/transactions",
+          "request_body": null,
+          "expected_status_code": 404,
+          "actual_status_code": 404,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "User not found: non_existent_user_123",
+            "details": null
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

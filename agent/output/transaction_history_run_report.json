@@ -1,0 +1,1789 @@
+[
+  {
+    "title": "Get transaction history for user with no transactions",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.370514+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-1",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.473924+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history for user with no transactions",
+        "step_summary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_4cd2f8c6cf@example.com",
+            "name": "RzBtdyMHWQaV"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "RzBtdyMHWQaV",
+            "email": "qa_4cd2f8c6cf@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_4cd2f8c6cf@example.com",
+              "actual": "qa_4cd2f8c6cf@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "RzBtdyMHWQaV",
+              "actual": "RzBtdyMHWQaV",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with no transactions",
+        "step_summary": "Get transaction history for user $${user_id} with no transactions",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario verifies that a user with no transactions receives a 200 OK response. However, while the userId is validated, the content of the transactions list is not explicitly asserted to be empty.",
+      "reasons": [
+        "Target step lacks assertion on the actual content of the transactions array.",
+        "The test passes even if the API returns transactions for the user, as long as the userId matches.",
+        "Assertion strength is high for userId but zero for the primary business logic outcome (empty list)."
+      ],
+      "missingAssertions": [
+        "Assertion that '$.transactions' is an empty array or has length 0."
+      ],
+      "suspectedRootCause": "Incomplete test coverage for the specific business condition (empty state).",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify that the transactions field is indeed an empty list and not null or containing unexpected data."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history for user with deposit transactions",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.475491+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-2",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.511067+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history for user with deposit transactions",
+        "step_summary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_d1a7d48edb@example.com",
+            "name": "UUzI0OtQ7ofS"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "UUzI0OtQ7ofS",
+            "email": "qa_d1a7d48edb@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_d1a7d48edb@example.com",
+              "actual": "qa_d1a7d48edb@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "UUzI0OtQ7ofS",
+              "actual": "UUzI0OtQ7ofS",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with deposit transactions",
+        "step_summary": "Deposit 100.00 EUR into wallet for user $${user_id}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with deposit transactions",
+        "step_summary": "Get transaction history for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": [
+              {
+                "operationId": "dep-7001",
+                "type": "DEPOSIT",
+                "amount": 100.0,
+                "currency": "EUR",
+                "timestamp": "2026-03-24T10:00:00Z",
+                "counterpartyId": null,
+                "comment": null
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario successfully executes setup steps and the target GET request. However, the target step only validates the userId and the presence of the transactions array, failing to verify the actual content of the transaction history.",
+      "reasons": [
+        "Target step lacks assertions on the content of the transactions list.",
+        "Business logic verification is incomplete as transaction details (amount, currency, type) are not checked.",
+        "Setup steps are robust, but target validation is shallow."
+      ],
+      "missingAssertions": [
+        "Verification of transaction count in the 'transactions' array.",
+        "Validation of transaction details (e.g., amount: 100.0, currency: EUR) within the history."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add assertions to verify that the transaction history contains the specific deposit made in the setup step.",
+        "Verify the transaction amount, currency, and timestamp in the response body."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history for user with transfer transactions",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.512518+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-3",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.548365+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history for user with transfer transactions",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_c39a295b0b@example.com",
+            "name": "yt5RsI2cOr1m"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "yt5RsI2cOr1m",
+            "email": "qa_c39a295b0b@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_c39a295b0b@example.com",
+              "actual": "qa_c39a295b0b@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "yt5RsI2cOr1m",
+              "actual": "yt5RsI2cOr1m",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with transfer transactions",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_b4eb109177@example.com",
+            "name": "tecUZj2K5Zzo"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "tecUZj2K5Zzo",
+            "email": "qa_b4eb109177@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_b4eb109177@example.com",
+              "actual": "qa_b4eb109177@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "tecUZj2K5Zzo",
+              "actual": "tecUZj2K5Zzo",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with transfer transactions",
+        "step_summary": "Deposit 100.00 EUR into user $${sender_id}'s wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with transfer transactions",
+        "step_summary": "Transfer 100.00 EUR from $${sender_id} to $${receiver_id}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 100.0,
+              "actual": 100.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history for user with transfer transactions",
+        "step_summary": "Get transaction history for user $${sender_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": [
+              {
+                "operationId": "tr-9001",
+                "type": "OUTGOING",
+                "amount": 100.0,
+                "currency": "EUR",
+                "timestamp": "2026-03-24T10:00:01Z",
+                "counterpartyId": "u-1005",
+                "comment": null
+              },
+              {
+                "operationId": "dep-7001",
+                "type": "DEPOSIT",
+                "amount": 100.0,
+                "currency": "EUR",
+                "timestamp": "2026-03-24T10:00:00Z",
+                "counterpartyId": null,
+                "comment": null
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario successfully executes setup steps and the target GET request. However, the target step only verifies the userId and fails to validate the actual content of the transaction history list.",
+      "reasons": [
+        "Target step lacks assertions on the transaction list content.",
+        "The business outcome (presence of the specific transfer) is not verified.",
+        "Assertion strength on target is limited to a single field (userId)."
+      ],
+      "missingAssertions": [
+        "Assertion that 'transactions' array is not empty.",
+        "Assertion that the transaction list contains the specific operationId or amount from the transfer setup step.",
+        "Validation of transaction details (amount, currency, receiverId) within the history list."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify that the transaction history contains the exact transaction created in step 3.",
+        "Check that the transaction list order or count is correct."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with non-existent userId",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.549596+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-4",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.572384+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with non-existent userId",
+        "step_summary": "Get transaction history for a non-existent userId 'non_existent_user_123'",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/non_existent_user_123/transactions",
+          "request_body": null,
+          "expected_status_code": 404,
+          "actual_status_code": 404,
+          "response_json": {
+            "error": "User not found: non_existent_user_123",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario verifies a 404 error for a non-existent user. While the status code and an error field match, there are no explicit assertions on the specific error message content or other response body fields.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No explicit field-level assertions were performed on the error message content.",
+        "Validation is limited to the presence of the 'error' key and the status code."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string value ('User not found: non_existent_user_123').",
+        "Validation of the 'details' field present in the response."
+      ],
+      "suspectedRootCause": "Insufficient test coverage for error response payload structure and content.",
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add explicit equality assertions for the error message text.",
+        "Verify the structure and content of the 'details' field in the error response."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with invalid limit value",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.572995+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-5",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.596941+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with invalid limit value",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_6fe085231e@example.com",
+            "name": "JK2chcMZWWZS"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "JK2chcMZWWZS",
+            "email": "qa_6fe085231e@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_6fe085231e@example.com",
+              "actual": "qa_6fe085231e@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with invalid limit value",
+        "step_summary": "Get transaction history for user $${user_id} with an invalid limit value of -1",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=-1",
+          "request_body": null,
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "limit must be >= 0",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests error handling for an invalid limit value. While the status code and error field presence were verified, no explicit assertions were made on the error message content.",
+      "reasons": [
+        "Target step uses required_fields_only assertion strength.",
+        "No field-level assertions exist to validate the specific error message string.",
+        "The business logic validation is shallow despite the setup being robust."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message content (e.g., checking if it contains 'limit must be >= 0')."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add an explicit field assertion to the target step to verify the error message text matches the expected validation error."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with invalid offset value",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.597370+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-6",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.619282+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with invalid offset value",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_7b1bd18842@example.com",
+            "name": "72Hw7iNIpHOJ"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "72Hw7iNIpHOJ",
+            "email": "qa_7b1bd18842@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_7b1bd18842@example.com",
+              "actual": "qa_7b1bd18842@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "72Hw7iNIpHOJ",
+              "actual": "72Hw7iNIpHOJ",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with invalid offset value",
+        "step_summary": "Get transaction history for user $${user_id} with an invalid offset value of -1",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?offset=-1",
+          "request_body": null,
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "offset must be >= 0",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests error handling for an invalid offset value. While the status code and presence of an error field were verified, no explicit assertions were made against the error message content.",
+      "reasons": [
+        "Target step uses required_fields_only assertion strength.",
+        "No field-level assertions exist to validate the specific error message text.",
+        "The business logic validation is shallow despite the setup being robust."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string (e.g., checking if it contains 'offset must be >= 0')."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify that the error message returned is exactly what is expected for this specific error type."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with limit at maximum boundary (100)",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.619928+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-7",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.641359+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with limit at maximum boundary (100)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_e98258a6da@example.com",
+            "name": "buXQwtTxIgAU"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "buXQwtTxIgAU",
+            "email": "qa_e98258a6da@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_e98258a6da@example.com",
+              "actual": "qa_e98258a6da@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with limit at maximum boundary (100)",
+        "step_summary": "Get transaction history for user $${user_id} with limit set to the maximum boundary of 100",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=100",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario tests a boundary condition for a transaction history limit of 100. While the status code and userId match, there is no assertion verifying the actual count or content of the transactions array.",
+      "reasons": [
+        "Target step lacks assertions on the size of the transactions list.",
+        "The business logic (limit=100) is not explicitly validated against the response payload.",
+        "Assertion strength is high for structure but low for the specific boundary logic being tested."
+      ],
+      "missingAssertions": [
+        "Assertion that the length of the 'transactions' array is <= 100.",
+        "Assertion that the 'transactions' array contains the expected number of records if data was pre-seeded."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify the length of the 'transactions' array in the target step.",
+        "Ensure the response contains the expected transaction data structure."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with limit exceeding maximum (101)",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.641773+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-8",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.662739+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with limit exceeding maximum (101)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_d89f071496@example.com",
+            "name": "ebNTXzTpXmk1"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "ebNTXzTpXmk1",
+            "email": "qa_d89f071496@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_d89f071496@example.com",
+              "actual": "qa_d89f071496@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with limit exceeding maximum (101)",
+        "step_summary": "Get transaction history for user $${user_id} with limit set to 101",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=101",
+          "request_body": null,
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "limit must be <= 100",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a boundary condition for the transaction history limit. While the status code and error field presence were verified, no explicit assertions were made on the error message content.",
+      "reasons": [
+        "Target step lacks explicit field-level assertions.",
+        "Assertion strength is only 'required_fields_only'.",
+        "The specific error message 'limit must be <= 100' was not formally asserted."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string to ensure the correct validation logic is triggered."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify the exact error message string in the target step assertion."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with limit of 1 (minimum positive)",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.663351+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-9",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.687394+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with limit of 1 (minimum positive)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_b0efb63006@example.com",
+            "name": "KfuGSGQJKViD"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "KfuGSGQJKViD",
+            "email": "qa_b0efb63006@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_b0efb63006@example.com",
+              "actual": "qa_b0efb63006@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "KfuGSGQJKViD",
+              "actual": "KfuGSGQJKViD",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with limit of 1 (minimum positive)",
+        "step_summary": "Get transaction history for user $${user_id} with limit set to 1",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=1",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario tests a limit parameter but fails to validate the actual content or length of the returned transaction list. While the status code and userId match, the core business logic regarding the 'limit=1' constraint is unverified.",
+      "reasons": [
+        "Target step lacks assertions on the 'transactions' array length.",
+        "The 'limit' parameter functionality is not explicitly validated through response body inspection.",
+        "Assertion strength is high for userId, but zero for the primary data payload."
+      ],
+      "missingAssertions": [
+        "Assertion that '$.transactions.length' equals 1.",
+        "Validation of transaction object structure within the array."
+      ],
+      "suspectedRootCause": "Incomplete test coverage for the specific parameter (limit) being tested.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify the length of the transactions array matches the limit parameter.",
+        "Verify that the transaction data returned is correct for the specific user."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with offset zero",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.687843+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-10",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.707798+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with offset zero",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_8e6772f933@example.com",
+            "name": "3Pj7PxrWNSZT"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "3Pj7PxrWNSZT",
+            "email": "qa_8e6772f933@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_8e6772f933@example.com",
+              "actual": "qa_8e6772f933@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with offset zero",
+        "step_summary": "Get transaction history for user $${user_id} with offset 0",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?offset=0",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario successfully creates a user and retrieves their transaction history. Both setup and target steps include explicit field-level assertions, ensuring data integrity.",
+      "reasons": [
+        "Setup step verified user creation with field assertions.",
+        "Target step verified userId matches the expected value.",
+        "Test state reset was successful and clean."
+      ],
+      "missingAssertions": [
+        "No explicit assertions on the contents or length of the 'transactions' array."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify the structure and content of the 'transactions' list in the response."
+      ]
+    }
+  },
+  {
+    "title": "Get transaction history with offset beyond total record count",
+    "endpoint_id": "transaction_history",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:18:42.708228+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSACTION-HISTORY-11",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:18:42.730404+00:00",
+    "steps": [
+      {
+        "title": "Get transaction history with offset beyond total record count",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_c61378e55b@example.com",
+            "name": "LLQKulpj6vLk"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "LLQKulpj6vLk",
+            "email": "qa_c61378e55b@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_c61378e55b@example.com",
+              "actual": "qa_c61378e55b@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "LLQKulpj6vLk",
+              "actual": "LLQKulpj6vLk",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with offset beyond total record count",
+        "step_summary": "Deposit 100.00 EUR into wallet for user $${user_id}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Get transaction history with offset beyond total record count",
+        "step_summary": "Get transaction history for user $${user_id} with an offset of 1000 to exceed total record count",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=20&offset=1000",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "transactions",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests pagination by requesting an offset beyond the record count. While the status code is 200, the target step fails to verify that the 'transactions' array is empty, which is the expected business outcome.",
+      "reasons": [
+        "Target step only validates the userId field.",
+        "No assertion exists to confirm the transactions list is empty for an out-of-bounds offset.",
+        "A 200 OK response with a populated list would still pass this test despite being a functional failure."
+      ],
+      "missingAssertions": [
+        "Assertion that '$.transactions' is an empty array or has length 0."
+      ],
+      "suspectedRootCause": "Incomplete test coverage for pagination boundary logic.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify that the 'transactions' array is empty when offset > total count.",
+        "Check if the response includes metadata like 'totalCount' to ensure consistency."
+      ]
+    }
+  }
+]

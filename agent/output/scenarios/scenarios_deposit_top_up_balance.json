@@ -1,0 +1,1159 @@
+{
+  "endpointId": "deposit_top_up_balance",
+  "scenarios": [
+    {
+      "title": "Deposit valid amount to existing user",
+      "category": "positive",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "userId: required, must refer to an existing user",
+        "amount: required, number > 0, up to two decimal places",
+        "currency: currently only \"EUR\" is supported",
+        "200"
+      ],
+      "setupReason": "A user must exist before depositing; no pre-existing user is guaranteed in initial state.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR to user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-1",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-1"
+    },
+    {
+      "title": "Deposit with non-existent userId",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "sourceRefs": [
+        "userId: required, must refer to an existing user",
+        "404: user not found"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_1_deposit_top_up_balance",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit EUR 100.00 for a non-existent userId 'non_existent_user_123'",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "non_existent_user_123"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 404,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-2",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-2"
+    },
+    {
+      "title": "Deposit with zero amount",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "amount: required, number > 0",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the zero-amount error from a 404.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit with amount 0.0 EUR for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 0.0,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-3",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-3"
+    },
+    {
+      "title": "Deposit with negative amount",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "amount: required, number > 0",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the negative-amount error from a 404.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit with a negative amount of -10.00 EUR for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": -10.0,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-4",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-4"
+    },
+    {
+      "title": "Deposit with unsupported currency",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "currency: currently only \"EUR\" is supported",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the currency error from a 404.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit with an unsupported currency (USD) for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "USD",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-5",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-5"
+    },
+    {
+      "title": "Deposit with wrong amount format (more than two decimal places)",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "amount: required, number > 0, up to two decimal places",
+        "400: invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+      ],
+      "setupReason": "A valid user must exist to isolate the format error from a 404.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit with amount 10.123 EUR for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.123,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-6",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-6"
+    },
+    {
+      "title": "Deposit with missing userId field",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "userId: required",
+        "400: invalid data"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_1_deposit_top_up_balance",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit EUR with missing userId",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": "$${random_decimal_amount}",
+              "currency": "EUR"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-7",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-7"
+    },
+    {
+      "title": "Deposit with missing amount field",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "amount: required",
+        "400: invalid data"
+      ],
+      "setupReason": "A valid user must exist to isolate the missing-amount error from a 404.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_name}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_name}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit to wallet for user $${user_id} with missing amount field",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-8",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-8"
+    },
+    {
+      "title": "Deposit with minimum valid amount (0.01)",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "amount: required, number > 0, up to two decimal places"
+      ],
+      "setupReason": "A valid user must exist to test the minimum boundary amount.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 0.01 EUR into wallet for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 0.01,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-9",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-9"
+    },
+    {
+      "title": "Deposit with amount having exactly two decimal places",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "amount: required, number > 0, up to two decimal places"
+      ],
+      "setupReason": "A valid user must exist to test the two-decimal-place boundary.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_name}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_name}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_name}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "target",
+            "stepName": "target_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 10.55 EUR into wallet for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.55,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-DEPOSIT-TOP-UP-BALANCE-10",
+      "id": "TS-DEPOSIT-TOP-UP-BALANCE-10"
+    }
+  ]
+}

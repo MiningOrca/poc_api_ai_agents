@@ -1,0 +1,80 @@
+{
+  "title": "Create user with name of exactly 1 character",
+  "endpoint_id": "create_user",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:13:48.693767+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-CREATE-USER-2",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:13:48.734304+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "userId": "u-1004"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Create user with name of exactly 1 character",
+      "step_name": "target_1_create_user",
+      "step_role": "target",
+      "step_summary": "Create user with name of exactly 1 character",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_df1e9d9e1f@example.com",
+            "name": "A"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_df1e9d9e1f@example.com",
+              "actual": "qa_df1e9d9e1f@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "A",
+              "actual": "A",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "userId",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "A",
+            "email": "qa_df1e9d9e1f@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

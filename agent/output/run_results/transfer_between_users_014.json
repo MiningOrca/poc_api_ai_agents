@@ -1,0 +1,237 @@
+{
+  "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+  "endpoint_id": "transfer_between_users",
+  "passed": false,
+  "started_at_utc": "2026-04-07T20:16:42.430163+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-14",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:16:42.456510+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": 3,
+  "shared_context": {
+    "sender_id": "u-1004",
+    "receiver_id": "u-1005"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_3c893f5d1f@example.com",
+            "name": "2XYNPVINeMLT"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_3c893f5d1f@example.com",
+              "actual": "qa_3c893f5d1f@example.com",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "sender_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "2XYNPVINeMLT",
+            "email": "qa_3c893f5d1f@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "step_name": "setup_2_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a new user with email $${random_email_receiver} and name $${random_str_receiver}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_af3ce60c61@example.com",
+            "name": "9TcZmFICnGpd"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_af3ce60c61@example.com",
+              "actual": "qa_af3ce60c61@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "9TcZmFICnGpd",
+              "actual": "9TcZmFICnGpd",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "receiver_id",
+              "sourcePath": "$.userId",
+              "value": "u-1005"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1005",
+            "name": "9TcZmFICnGpd",
+            "email": "qa_af3ce60c61@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 2,
+      "scenario_title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "step_name": "setup_3_deposit_top_up_balance",
+      "step_role": "setup",
+      "step_summary": "Deposit 1000.00 EUR into sender $${sender_id}'s wallet",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 1000.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "currency",
+            "newBalance",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 1000.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 3,
+      "scenario_title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "step_name": "setup_4_transfer_between_users",
+      "step_role": "setup",
+      "step_summary": "Transfer 4000.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": false,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": false,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 4000.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 402,
+          "required_fields_checked": [],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Insufficient funds",
+            "details": null
+          },
+          "response_text": null,
+          "error": "Expected status 200, got 402"
+        }
+      ],
+      "error": "Expected status 200, got 402"
+    },
+    {
+      "index": 4,
+      "scenario_title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "step_name": "target_5_transfer_between_users",
+      "step_role": "target",
+      "step_summary": "Transfer 1000.01 EUR from sender $${sender_id} to receiver $${receiver_id} to exceed the 5,000 EUR daily limit",
+      "kind": "single",
+      "times": 1,
+      "passed": false,
+      "attempts": [],
+      "error": "Not executed because previous step failed: setup_4_transfer_between_users"
+    }
+  ],
+  "error": "Expected status 200, got 402"
+}

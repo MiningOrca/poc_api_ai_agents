@@ -1,0 +1,228 @@
+{
+  "title": "Transfer amount exceeding sender's balance",
+  "endpoint_id": "transfer_between_users",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:16:42.342684+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-11",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:16:42.368266+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "sender_id": "u-1004",
+    "receiver_id": "u-1005"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Transfer amount exceeding sender's balance",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_446496588c@example.com",
+            "name": "jKrL5Tuh4ZZ3"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_446496588c@example.com",
+              "actual": "qa_446496588c@example.com",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "sender_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "jKrL5Tuh4ZZ3",
+            "email": "qa_446496588c@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Transfer amount exceeding sender's balance",
+      "step_name": "setup_2_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_d8cb2e5e4e@example.com",
+            "name": "B8fKItHZZzGJ"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_d8cb2e5e4e@example.com",
+              "actual": "qa_d8cb2e5e4e@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "B8fKItHZZzGJ",
+              "actual": "B8fKItHZZzGJ",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "receiver_id",
+              "sourcePath": "$.userId",
+              "value": "u-1005"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1005",
+            "name": "B8fKItHZZzGJ",
+            "email": "qa_d8cb2e5e4e@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 2,
+      "scenario_title": "Transfer amount exceeding sender's balance",
+      "step_name": "setup_3_deposit_top_up_balance",
+      "step_role": "setup",
+      "step_summary": "Deposit 100.00 EUR into sender $${sender_id} wallet",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "currency",
+            "newBalance",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 3,
+      "scenario_title": "Transfer amount exceeding sender's balance",
+      "step_name": "target_4_transfer_between_users",
+      "step_role": "target",
+      "step_summary": "Transfer 150.00 EUR from sender $${sender_id} to receiver $${receiver_id} exceeding the 100.00 EUR balance",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 150.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "MZfNsvishXwd"
+          },
+          "expected_status_code": 402,
+          "actual_status_code": 402,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Insufficient funds",
+            "details": null
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

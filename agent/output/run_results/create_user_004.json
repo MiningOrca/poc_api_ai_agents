@@ -1,0 +1,59 @@
+{
+  "title": "Create user with name exceeding 100 characters",
+  "endpoint_id": "create_user",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:13:48.774586+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-CREATE-USER-4",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:13:48.815595+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {},
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Create user with name exceeding 100 characters",
+      "step_name": "target_1_create_user",
+      "step_role": "target",
+      "step_summary": "Create user with a name exceeding 100 characters",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_6e6f690d69@example.com",
+            "name": "This name is intentionally designed to be longer than one hundred characters to test the validation logic of the user creation endpoint."
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "name",
+                "message": "String should have at most 100 characters"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

@@ -1,0 +1,1281 @@
+[
+  {
+    "title": "Deposit valid amount to existing user",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.716335+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-1",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.804968+00:00",
+    "steps": [
+      {
+        "title": "Deposit valid amount to existing user",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_13ea6251c0@example.com",
+            "name": "wIMmf7b63EwE"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "wIMmf7b63EwE",
+            "email": "qa_13ea6251c0@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_13ea6251c0@example.com",
+              "actual": "qa_13ea6251c0@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit valid amount to existing user",
+        "step_summary": "Deposit 100.00 EUR to user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario successfully deposits funds and verifies the currency and user ID. However, it fails to assert the actual value of the 'newBalance' field, which is the primary business outcome.",
+      "reasons": [
+        "Target step lacks assertion on the critical 'newBalance' field value.",
+        "The test only confirms the response structure and metadata rather than the mathematical correctness of the deposit."
+      ],
+      "missingAssertions": [
+        "Explicit equality assertion for '$.newBalance' to verify the mathematical result of the deposit."
+      ],
+      "suspectedRootCause": "Incomplete test coverage of the response payload's business-critical fields.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify that the 'newBalance' returned matches the expected previous balance plus the deposited amount."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with non-existent userId",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.809181+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-2",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.846878+00:00",
+    "steps": [
+      {
+        "title": "Deposit with non-existent userId",
+        "step_summary": "Deposit EUR 100.00 for a non-existent userId 'non_existent_user_123'",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "non_existent_user_123"
+          },
+          "expected_status_code": 404,
+          "actual_status_code": 404,
+          "response_json": {
+            "error": "User not found: non_existent_user_123",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario verifies a 404 error for a non-existent user. While the error message is checked, no specific field-level assertions were performed on the response body.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No explicit field-level assertions are present in the execution trace.",
+        "Validation is limited to the presence of an error field and a summary message."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the exact string value of the 'error' field.",
+        "Validation of the 'details' field structure or content."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add explicit equality assertions for the error message string.",
+        "Verify the structure and content of the 'details' object in the response."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with zero amount",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.847476+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-3",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.877055+00:00",
+    "steps": [
+      {
+        "title": "Deposit with zero amount",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_e59d88f2cf@example.com",
+            "name": "qGwXZ9kJ5Gh7"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "qGwXZ9kJ5Gh7",
+            "email": "qa_e59d88f2cf@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_e59d88f2cf@example.com",
+              "actual": "qa_e59d88f2cf@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "qGwXZ9kJ5Gh7",
+              "actual": "qGwXZ9kJ5Gh7",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with zero amount",
+        "step_summary": "Deposit with amount 0.0 EUR for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 0.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must be greater than 0"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a negative case (zero amount deposit) and receives the expected 400 status code. However, the target step only verifies the presence of an error field without asserting the specific error message or business logic details.",
+      "reasons": [
+        "Target step lacks explicit field assertions for the error message.",
+        "Assertion strength is only 'required_fields_only' for the critical business validation step.",
+        "The response contains specific error details in the 'details' array that were not explicitly validated."
+      ],
+      "missingAssertions": [
+        "Assertion on the specific error message string.",
+        "Assertion on the 'details' array content to ensure the correct field ('amount') triggered the error."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add explicit field assertions to the target step to validate the error message and the specific field causing the validation error."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with negative amount",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.877536+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-4",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.902088+00:00",
+    "steps": [
+      {
+        "title": "Deposit with negative amount",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_fa67495ec4@example.com",
+            "name": "gQCYywhcirCP"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "gQCYywhcirCP",
+            "email": "qa_fa67495ec4@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_fa67495ec4@example.com",
+              "actual": "qa_fa67495ec4@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "gQCYywhcirCP",
+              "actual": "gQCYywhcirCP",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with negative amount",
+        "step_summary": "Deposit with a negative amount of -10.00 EUR for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": -10.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must be greater than 0"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a negative deposit amount and receives a 400 error as expected. However, the target step only verifies the presence of an error field without asserting the specific error message or field-level details.",
+      "reasons": [
+        "Target step uses required_fields_only assertion strength.",
+        "No explicit field assertions were performed on the error response body.",
+        "The response contains specific error details that were not validated against expected values."
+      ],
+      "missingAssertions": [
+        "Assertion on the specific error message string (e.g., 'Invalid request data')",
+        "Assertion on the error details object to ensure the 'amount' field is the one triggering the error"
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add explicit field assertions for the error message and the specific validation error in the details array."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with unsupported currency",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.903415+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-5",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.927865+00:00",
+    "steps": [
+      {
+        "title": "Deposit with unsupported currency",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_d5c9819b81@example.com",
+            "name": "5S7x3vxO4HNx"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "5S7x3vxO4HNx",
+            "email": "qa_d5c9819b81@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_d5c9819b81@example.com",
+              "actual": "qa_d5c9819b81@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "5S7x3vxO4HNx",
+              "actual": "5S7x3vxO4HNx",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with unsupported currency",
+        "step_summary": "Deposit with an unsupported currency (USD) for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "USD",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "currency",
+                "message": "Input should be 'EUR'"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests error handling for an unsupported currency. While the status code matched, the target step lacks explicit field-level assertions on the error response body.",
+      "reasons": [
+        "Target step uses required_fields_only assertion strength.",
+        "No explicit field assertions were performed on the error message or details.",
+        "The business logic validation is shallow despite a successful status match."
+      ],
+      "missingAssertions": [
+        "Assertion on the specific error message string.",
+        "Assertion on the error details field to ensure the correct field (currency) is identified as the cause."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify that the error response contains the specific 'Input should be EUR' message via explicit field assertion."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with wrong amount format (more than two decimal places)",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.928350+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-6",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.951419+00:00",
+    "steps": [
+      {
+        "title": "Deposit with wrong amount format (more than two decimal places)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_23d711723a@example.com",
+            "name": "BrzuAgecuwVe"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "BrzuAgecuwVe",
+            "email": "qa_23d711723a@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_23d711723a@example.com",
+              "actual": "qa_23d711723a@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with wrong amount format (more than two decimal places)",
+        "step_summary": "Deposit with amount 10.123 EUR for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 10.123,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must have at most two decimal places"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests negative validation for an invalid decimal format. While the status code matched, the target step only verified the presence of an error field without asserting the specific error message content.",
+      "reasons": [
+        "Target step lacks explicit field assertions for the error message.",
+        "Assertion strength is only 'required_fields_only' for the critical business logic validation."
+      ],
+      "missingAssertions": [
+        "Assertion on the specific error message text (e.g., 'Amount must have at most two decimal places').",
+        "Assertion on the error field value (e.g., 'Invalid request data')."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify that the error message content is explicitly asserted to prevent regression where a 400 is returned for the wrong reason."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with missing userId field",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.951894+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-7",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:43.974716+00:00",
+    "steps": [
+      {
+        "title": "Deposit with missing userId field",
+        "step_summary": "Deposit EUR with missing userId",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 9.65,
+            "currency": "EUR"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "userId",
+                "message": "Field required"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario correctly validates a 400 Bad Request when the userId is missing. The response includes a specific error message identifying the missing field, confirming the API's validation logic.",
+      "reasons": [
+        "Target step correctly matched the expected 400 status code.",
+        "Response body contains specific error details pointing to the missing 'userId' field.",
+        "Assertion strength is sufficient for a negative validation test."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": null,
+      "recommendedAction": "rerun_scenario",
+      "recommendedPriority": "low",
+      "followUpChecks": []
+    }
+  },
+  {
+    "title": "Deposit with missing amount field",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:43.975256+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-8",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:44.002000+00:00",
+    "steps": [
+      {
+        "title": "Deposit with missing amount field",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_f0f16ed261@example.com",
+            "name": "2SZsAYjbfcE7"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "2SZsAYjbfcE7",
+            "email": "qa_f0f16ed261@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_f0f16ed261@example.com",
+              "actual": "qa_f0f16ed261@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "2SZsAYjbfcE7",
+              "actual": "2SZsAYjbfcE7",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with missing amount field",
+        "step_summary": "Deposit to wallet for user $${user_id} with missing amount field",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Field required"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a negative case for a missing 'amount' field. While the status code matched, the target step only verified the presence of an 'error' field without asserting the specific error message or field details.",
+      "reasons": [
+        "Target step assertion strength is only 'required_fields_only'.",
+        "No explicit field-level assertions were performed on the error response body.",
+        "The validation relies on the presence of an error key rather than verifying the specific error content."
+      ],
+      "missingAssertions": [
+        "Assertion on the specific error message string.",
+        "Assertion on the 'details' array to ensure the error specifically points to the 'amount' field."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add explicit assertions for the error message and the specific field causing the validation failure in the target step."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with minimum valid amount (0.01)",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:44.002568+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-9",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:44.025626+00:00",
+    "steps": [
+      {
+        "title": "Deposit with minimum valid amount (0.01)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_bf08b500aa@example.com",
+            "name": "Nv6DCpbVJCd0"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "Nv6DCpbVJCd0",
+            "email": "qa_bf08b500aa@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_bf08b500aa@example.com",
+              "actual": "qa_bf08b500aa@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with minimum valid amount (0.01)",
+        "step_summary": "Deposit 0.01 EUR into wallet for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 0.01,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 0.01,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario successfully deposits a minimum amount of 0.01 EUR. Target step assertions include explicit field checks for currency and userId, and the setup process was clean.",
+      "reasons": [
+        "Target step contains explicit field-level assertions.",
+        "Setup steps were completed successfully with strong assertions.",
+        "Test state reset passed without errors."
+      ],
+      "missingAssertions": [
+        "No explicit assertion on the 'newBalance' value to verify the mathematical outcome of the deposit."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add an assertion to verify that 'newBalance' equals the previous balance plus the deposited amount."
+      ]
+    }
+  },
+  {
+    "title": "Deposit with amount having exactly two decimal places",
+    "endpoint_id": "deposit_top_up_balance",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:14:44.026152+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-10",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:14:44.046296+00:00",
+    "steps": [
+      {
+        "title": "Deposit with amount having exactly two decimal places",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_081bc96f9a@example.com",
+            "name": "KjlwdP4DDOPm"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "KjlwdP4DDOPm",
+            "email": "qa_081bc96f9a@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_081bc96f9a@example.com",
+              "actual": "qa_081bc96f9a@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "KjlwdP4DDOPm",
+              "actual": "KjlwdP4DDOPm",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Deposit with amount having exactly two decimal places",
+        "step_summary": "Deposit 10.55 EUR into wallet for user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 10.55,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 10.55,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario tests a deposit with specific decimal precision but fails to verify the actual mathematical outcome. While the status code and identity fields match, the resulting balance is not asserted.",
+      "reasons": [
+        "The target step lacks an assertion on the 'newBalance' field.",
+        "The business logic (correct balance calculation) is not validated despite being the primary purpose of the test.",
+        "Assertion strength is high for identity, but zero for the actual value being tested."
+      ],
+      "missingAssertions": [
+        "Explicit assertion for '$.newBalance' to verify the mathematical correctness of the deposit."
+      ],
+      "suspectedRootCause": "Incomplete test coverage where response structure is validated but business values are ignored.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify that the newBalance matches (previousBalance + 10.55).",
+        "Add assertions for decimal precision in the balance response."
+      ]
+    }
+  }
+]

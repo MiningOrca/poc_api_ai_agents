@@ -1,0 +1,395 @@
+{
+  "endpointId": "transaction_history",
+  "ideas": [
+    {
+      "id": "TC-TRANSACTION-HISTORY-1",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history for user with no transactions",
+      "category": "positive",
+      "mode": "chain",
+      "sourceRefs": [
+        "userId",
+        "success response code: 200"
+      ],
+      "setupReason": "A user must exist before transaction history can be retrieved; no transactions are made so the list is empty.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-2",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history for user with deposit transactions",
+      "category": "positive",
+      "mode": "chain",
+      "sourceRefs": [
+        "userId",
+        "success response code: 200"
+      ],
+      "setupReason": "A user must exist and have at least one deposit so that the history contains records.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-3",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history for user with transfer transactions",
+      "category": "positive",
+      "mode": "chain",
+      "sourceRefs": [
+        "userId",
+        "success response code: 200",
+        "A user cannot transfer money to themselves"
+      ],
+      "setupReason": "Two users must exist, a deposit must fund the sender, and a transfer must be made so that transfer records appear in history.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-4",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with non-existent userId",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "404: user not found",
+        "userId"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 404,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-5",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with invalid limit value",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "400: invalid limit/offset parameters",
+        "limit"
+      ],
+      "setupReason": "A user must exist to reach the parameter validation error path.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-6",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with invalid offset value",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "400: invalid limit/offset parameters",
+        "offset"
+      ],
+      "setupReason": "A user must exist to reach the parameter validation error path.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-7",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with limit at maximum boundary (100)",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "limit",
+        "maximum 100"
+      ],
+      "setupReason": "A user must exist to test the maximum allowed limit value.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-8",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with limit exceeding maximum (101)",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "400: invalid limit/offset parameters",
+        "limit",
+        "maximum 100"
+      ],
+      "setupReason": "A user must exist to test the over-maximum limit boundary.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-9",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with limit of 1 (minimum positive)",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "limit",
+        "default 20, maximum 100"
+      ],
+      "setupReason": "A user must exist to test the minimum positive limit value.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-10",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with offset zero",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "offset",
+        "offset for pagination"
+      ],
+      "setupReason": "A user must exist to test offset at zero boundary.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSACTION-HISTORY-11",
+      "endpointId": "transaction_history",
+      "title": "Get transaction history with offset beyond total record count",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "offset",
+        "offset for pagination",
+        "success response code: 200"
+      ],
+      "setupReason": "A user with a known number of transactions must exist so offset can exceed the total count.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        },
+        {
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    }
+  ]
+}

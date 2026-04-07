@@ -1,0 +1,3550 @@
+[
+  {
+    "title": "Transfer valid amount between two existing users",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.014776+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-1",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.095715+00:00",
+    "steps": [
+      {
+        "title": "Transfer valid amount between two existing users",
+        "step_summary": "Create a user with email $${random_email_sender} and name $${random_str_sender}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_9ac2a3d18c@example.com",
+            "name": "cz94WDVYZPXK"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "cz94WDVYZPXK",
+            "email": "qa_9ac2a3d18c@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_9ac2a3d18c@example.com",
+              "actual": "qa_9ac2a3d18c@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer valid amount between two existing users",
+        "step_summary": "Create a receiver user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_8aee8d07da@example.com",
+            "name": "nx3ovpyCPGY3"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "nx3ovpyCPGY3",
+            "email": "qa_8aee8d07da@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_8aee8d07da@example.com",
+              "actual": "qa_8aee8d07da@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "nx3ovpyCPGY3",
+              "actual": "nx3ovpyCPGY3",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer valid amount between two existing users",
+        "step_summary": "Deposit 100.00 EUR into sender $${sender_id} wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer valid amount between two existing users",
+        "step_summary": "Transfer 100.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "7iD7ruPM9dYs"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 100.0,
+              "actual": 100.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario successfully executes a transfer between two users with strong setup validation. However, the target step only validates the request echo in the response and fails to verify the actual balance changes for either user.",
+      "reasons": [
+        "Target step uses field assertions but only on input-related fields (amount, currency, IDs).",
+        "No verification of the side effect (balance deduction/addition) is performed.",
+        "The business outcome of the transfer is not validated via subsequent GET requests or balance checks."
+      ],
+      "missingAssertions": [
+        "Verification of sender's new balance (should be 0.00 EUR).",
+        "Verification of receiver's new balance (should be 100.00 EUR)."
+      ],
+      "suspectedRootCause": "Incomplete test coverage of business logic side effects.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add GET requests to verify wallet balances for both sender and receiver after the transfer.",
+        "Verify that the transaction history/ledger reflects the transfer."
+      ]
+    }
+  },
+  {
+    "title": "Transfer with amount of two decimal places",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.098151+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-2",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.135524+00:00",
+    "steps": [
+      {
+        "title": "Transfer with amount of two decimal places",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_a310ecf2e7@example.com",
+            "name": "6sfTwbAuzbmn"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "6sfTwbAuzbmn",
+            "email": "qa_a310ecf2e7@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_a310ecf2e7@example.com",
+              "actual": "qa_a310ecf2e7@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "6sfTwbAuzbmn",
+              "actual": "6sfTwbAuzbmn",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer with amount of two decimal places",
+        "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_82b894a752@example.com",
+            "name": "Vw7EFJDC6ggj"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "Vw7EFJDC6ggj",
+            "email": "qa_82b894a752@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_82b894a752@example.com",
+              "actual": "qa_82b894a752@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "Vw7EFJDC6ggj",
+              "actual": "Vw7EFJDC6ggj",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer with amount of two decimal places",
+        "step_summary": "Deposit 10.55 EUR to sender $${sender_id} wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 10.55,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 10.55,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer with amount of two decimal places",
+        "step_summary": "Transfer 10.55 EUR from $${sender_id} to $${receiver_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.55,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "qjk4G19WKHys"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.55,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 10.55,
+              "actual": 10.55,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario validates the transfer request response fields but fails to verify the actual financial outcome. There are no assertions checking the resulting balances of the sender or receiver wallets.",
+      "reasons": [
+        "Target step only validates the transfer operation response, not the state change.",
+        "Business logic (balance deduction/addition) is not verified.",
+        "The test title implies a precision check (two decimal places), but no mathematical validation of the balance is performed."
+      ],
+      "missingAssertions": [
+        "Sender's new balance after transfer.",
+        "Receiver's new balance after transfer."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add GET requests to verify sender balance is 0.00 EUR.",
+        "Add GET requests to verify receiver balance is 10.55 EUR."
+      ]
+    }
+  },
+  {
+    "title": "Transfer entire balance leaving sender at zero",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.137228+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-3",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.167087+00:00",
+    "steps": [
+      {
+        "title": "Transfer entire balance leaving sender at zero",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_870d8b1a63@example.com",
+            "name": "AkxjWS1a72jN"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "AkxjWS1a72jN",
+            "email": "qa_870d8b1a63@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_870d8b1a63@example.com",
+              "actual": "qa_870d8b1a63@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer entire balance leaving sender at zero",
+        "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_b28443cc86@example.com",
+            "name": "HqL4q857qLI2"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "HqL4q857qLI2",
+            "email": "qa_b28443cc86@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_b28443cc86@example.com",
+              "actual": "qa_b28443cc86@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer entire balance leaving sender at zero",
+        "step_summary": "Deposit 100.00 EUR into wallet for sender $${sender_id}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer entire balance leaving sender at zero",
+        "step_summary": "Transfer 100.00 EUR from sender $${sender_id} to receiver $${receiver_id} to leave zero balance",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "zc8WMIykzPoZ"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 100.0,
+              "actual": 100.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.9,
+      "summary": "The scenario successfully executes a transfer, but fails to verify the core business outcome. While the transfer response is checked for field equality, there are no assertions verifying the resulting balances of the sender or receiver.",
+      "reasons": [
+        "The target step only validates the transfer request echo and status.",
+        "The primary goal of 'leaving sender at zero' is never explicitly verified via a balance check.",
+        "No post-condition step exists to confirm the receiver's balance increased or the sender's balance decreased."
+      ],
+      "missingAssertions": [
+        "Assertion that sender's new balance is 0.00.",
+        "Assertion that receiver's new balance is 100.00.",
+        "Verification of the transaction history or ledger state."
+      ],
+      "suspectedRootCause": "Incomplete test coverage where the test validates the API response of the action rather than the state change in the system.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add a step to fetch the sender's balance after the transfer to assert it is 0.",
+        "Add a step to fetch the receiver's balance after the transfer to assert it is 100.00."
+      ]
+    }
+  },
+  {
+    "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.167900+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-4",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.195587+00:00",
+    "steps": [
+      {
+        "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_a598ec46ae@example.com",
+            "name": "OENMMsl6oDnG"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "OENMMsl6oDnG",
+            "email": "qa_a598ec46ae@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_a598ec46ae@example.com",
+              "actual": "qa_a598ec46ae@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+        "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_59c25c6e19@example.com",
+            "name": "WhF1WRpAB4m8"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "WhF1WRpAB4m8",
+            "email": "qa_59c25c6e19@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_59c25c6e19@example.com",
+              "actual": "qa_59c25c6e19@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "WhF1WRpAB4m8",
+              "actual": "WhF1WRpAB4m8",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+        "step_summary": "Deposit 5000 EUR into sender $${sender_id} wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 5000,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 5000.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+        "step_summary": "Transfer 5000 EUR from $${sender_id} to $${receiver_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 5000,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 5000.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 5000,
+              "actual": 5000.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a boundary condition for a daily transfer limit. While the target step passed with field assertions, it failed to verify the critical side effects of the transfer.",
+      "reasons": [
+        "Target step only validates the response of the transfer request itself.",
+        "No verification was performed to ensure the sender's balance decreased or the receiver's balance increased.",
+        "The business outcome (actual movement of funds) is not confirmed by the test steps."
+      ],
+      "missingAssertions": [
+        "Post-transfer balance check for the sender (expected: 0 EUR).",
+        "Post-transfer balance check for the receiver (expected: 5000 EUR).",
+        "Verification of transaction history or ledger entries."
+      ],
+      "suspectedRootCause": "Incomplete test coverage focusing on API response structure rather than state change.",
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add GET requests to verify wallet balances for both sender and receiver after the transfer.",
+        "Verify that the daily limit counter for the user has been updated correctly."
+      ]
+    }
+  },
+  {
+    "title": "5th transfer in a single day succeeds (count limit boundary)",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.196383+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-5",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.233175+00:00",
+    "steps": [
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_0b7f027e8b@example.com",
+            "name": "7bAjrItNqVgk"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "7bAjrItNqVgk",
+            "email": "qa_0b7f027e8b@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_0b7f027e8b@example.com",
+              "actual": "qa_0b7f027e8b@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_208d6b1b27@example.com",
+            "name": "yV3PhuE0SfHp"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "yV3PhuE0SfHp",
+            "email": "qa_208d6b1b27@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_208d6b1b27@example.com",
+              "actual": "qa_208d6b1b27@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "yV3PhuE0SfHp",
+              "actual": "yV3PhuE0SfHp",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Deposit 100.00 EUR into sender_id wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 10.0,
+              "actual": 10.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (5th transfer of the day)",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9002",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 10.0,
+              "actual": 10.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (4th transfer of the day)",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9003",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 10.0,
+              "actual": 10.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (5th transfer of the day)",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9004",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 10.0,
+              "actual": 10.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "5th transfer in a single day succeeds (count limit boundary)",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (5th transfer of the day)",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "4qwTk66rKrVP"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9005",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 10.0,
+              "actual": 10.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.8,
+      "summary": "The scenario attempts to verify a daily transfer limit boundary by performing multiple transfers. However, the target step only validates the response fields of the transfer itself and fails to verify the actual impact on the user's remaining daily limit or account balance.",
+      "reasons": [
+        "Target step uses field assertions but lacks business logic validation.",
+        "The scenario does not verify if the 5th transfer was actually the limit or if a 6th would fail.",
+        "No assertion exists to check the updated balance or the transfer count state."
+      ],
+      "missingAssertions": [
+        "Verification of the sender's remaining daily transfer count.",
+        "Verification of the sender's final wallet balance after the 5th transfer.",
+        "A negative test case (6th transfer) to confirm the limit is actually enforced."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Add a step to verify the sender's balance after the target transfer.",
+        "Add a step to attempt a 6th transfer and assert a 429 or 403 error code.",
+        "Verify the specific 'daily_limit_remaining' field if available in the API response."
+      ]
+    }
+  },
+  {
+    "title": "Transfer with non-existent senderId",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.234105+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-6",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.255236+00:00",
+    "steps": [
+      {
+        "title": "Transfer with non-existent senderId",
+        "step_summary": "Transfer EUR $${random_decimal_amount} from non-existent senderId 'non-existent-user-id' to receiverId $${random_str_receiver}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 4.0,
+            "currency": "EUR",
+            "receiverId": "7vyZ9lizCfWR",
+            "senderId": "non-existent-user-id"
+          },
+          "expected_status_code": 404,
+          "actual_status_code": 404,
+          "response_json": {
+            "error": "Sender not found: non-existent-user-id",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario successfully validates the error handling for a non-existent senderId. The target step correctly received a 404 status and verified the presence of the error field with a specific error message.",
+      "reasons": [
+        "Target step correctly matched the expected 404 status code.",
+        "Response validation included checking for the 'error' field.",
+        "The error message content matches the business logic for a missing sender."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": null,
+      "recommendedAction": "rerun_scenario",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify if other error fields (e.g., error_code) should be explicitly asserted for consistency."
+      ]
+    }
+  },
+  {
+    "title": "Transfer with non-existent receiverId",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.255760+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-7",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.277964+00:00",
+    "steps": [
+      {
+        "title": "Transfer with non-existent receiverId",
+        "step_summary": "Create a user with email $${random_email_sender} and name $${random_str_sender}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_f00f263834@example.com",
+            "name": "H3D9Mv6CQQqS"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "H3D9Mv6CQQqS",
+            "email": "qa_f00f263834@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_f00f263834@example.com",
+              "actual": "qa_f00f263834@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer with non-existent receiverId",
+        "step_summary": "Transfer EUR 100.00 from $${sender_id} to a non-existent receiverId 'non_existent_user_123'",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "receiverId": "non_existent_user_123",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 404,
+          "actual_status_code": 404,
+          "response_json": {
+            "error": "Receiver not found: non_existent_user_123",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a negative transfer case with a non-existent receiver. While the status code and error field presence were verified, no explicit field-level assertions were performed on the error message content.",
+      "reasons": [
+        "Target step lacks explicit field assertions for the error message content.",
+        "Assertion strength is limited to required fields only."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string to ensure the correct error reason is returned."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify the exact error message string matches the expected business logic for non-existent users."
+      ]
+    }
+  },
+  {
+    "title": "Self-transfer where senderId equals receiverId",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.278449+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-8",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.301795+00:00",
+    "steps": [
+      {
+        "title": "Self-transfer where senderId equals receiverId",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_2cefd507b5@example.com",
+            "name": "2Mmg4nhzO78s"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "2Mmg4nhzO78s",
+            "email": "qa_2cefd507b5@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_2cefd507b5@example.com",
+              "actual": "qa_2cefd507b5@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Self-transfer where senderId equals receiverId",
+        "step_summary": "Transfer EUR 100.00 from user $${user_id} to the same user $${user_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "receiverId": "u-1004",
+            "senderId": "u-1004",
+            "comment": "CQYpSADtaCsV"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "senderId and receiverId must be different",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a self-transfer edge case and correctly receives a 400 error. However, the target step only verifies the presence of an error field without asserting the specific error message content.",
+      "reasons": [
+        "Target step lacks explicit field assertions for the error message.",
+        "Assertion strength is limited to required fields only.",
+        "The business logic validation depends on the error string which was not explicitly checked."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string to ensure the correct business rule is triggered."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Verify that the error message 'senderId and receiverId must be different' is explicitly asserted in the test code."
+      ]
+    }
+  },
+  {
+    "title": "Transfer with amount of zero",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.302263+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-9",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.323035+00:00",
+    "steps": [
+      {
+        "title": "Transfer with amount of zero",
+        "step_summary": "Transfer 0 EUR between users",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 0,
+            "currency": "EUR",
+            "receiverId": "R1Q4RzQ0vX2v",
+            "senderId": "Woky6VsbJLJn"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must be greater than 0"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "valid_pass",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario successfully validates that a zero-amount transfer is rejected with a 400 error. The response includes a specific error message pointing to the 'amount' field, confirming the business logic for invalid input.",
+      "reasons": [
+        "Target step correctly matched the expected 400 status code.",
+        "Assertion strength is sufficient as the error message explicitly validates the 'amount' field constraint.",
+        "No setup or reset issues were detected."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": null,
+      "recommendedAction": "rerun_scenario",
+      "recommendedPriority": "low",
+      "followUpChecks": []
+    }
+  },
+  {
+    "title": "Transfer with negative amount",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.323414+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-10",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.342295+00:00",
+    "steps": [
+      {
+        "title": "Transfer with negative amount",
+        "step_summary": "Transfer -10.00 EUR from $${random_str_senderId} to $${random_str_receiverId}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": -10.0,
+            "currency": "EUR",
+            "receiverId": "8pLnpeokTqRZ",
+            "senderId": "HHp0JV8ywEmA"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must be greater than 0"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario validates a negative transfer amount by checking for a 400 status and the presence of an error field. However, it lacks explicit field-level assertions on the error message content or specific error codes.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No explicit field assertions were performed on the response body despite error details being available.",
+        "Validation is limited to the existence of an error field rather than verifying the specific error message content."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string in the 'details' array.",
+        "Assertion on specific error code or type if available in the response."
+      ],
+      "suspectedRootCause": "Incomplete test coverage regarding response body validation details.",
+      "recommendedAction": "strengthen_assertions",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add explicit assertions to verify the 'details.field' is 'amount' and 'details.message' matches the expected error text."
+      ]
+    }
+  },
+  {
+    "title": "Transfer amount exceeding sender's balance",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.342684+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-11",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.368266+00:00",
+    "steps": [
+      {
+        "title": "Transfer amount exceeding sender's balance",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_446496588c@example.com",
+            "name": "jKrL5Tuh4ZZ3"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "jKrL5Tuh4ZZ3",
+            "email": "qa_446496588c@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_446496588c@example.com",
+              "actual": "qa_446496588c@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer amount exceeding sender's balance",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_d8cb2e5e4e@example.com",
+            "name": "B8fKItHZZzGJ"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "B8fKItHZZzGJ",
+            "email": "qa_d8cb2e5e4e@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_d8cb2e5e4e@example.com",
+              "actual": "qa_d8cb2e5e4e@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "B8fKItHZZzGJ",
+              "actual": "B8fKItHZZzGJ",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer amount exceeding sender's balance",
+        "step_summary": "Deposit 100.00 EUR into sender $${sender_id} wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer amount exceeding sender's balance",
+        "step_summary": "Transfer 150.00 EUR from sender $${sender_id} to receiver $${receiver_id} exceeding the 100.00 EUR balance",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 150.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "MZfNsvishXwd"
+          },
+          "expected_status_code": 402,
+          "actual_status_code": 402,
+          "response_json": {
+            "error": "Insufficient funds",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.9,
+      "summary": "The scenario tests a negative transfer case where the sender has insufficient funds. While the status code 402 was correctly returned, the target step lacks explicit field-level assertions on the error response body.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No explicit field assertions were performed on the error response content despite the error message being visible.",
+        "The business logic outcome (insufficient funds) is only implicitly verified via the status code and presence of an error field."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string (e.g., 'Insufficient funds') to ensure the correct error type is returned.",
+        "Verification that the sender's balance remained unchanged after the failed transaction."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "low",
+      "followUpChecks": [
+        "Add field-level assertions for the error message in the target step.",
+        "Add a verification step to confirm the sender's balance was not deducted."
+      ]
+    }
+  },
+  {
+    "title": "Transfer when sender has zero balance",
+    "endpoint_id": "transfer_between_users",
+    "passed": true,
+    "started_at_utc": "2026-04-07T20:16:42.368917+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-12",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.400220+00:00",
+    "steps": [
+      {
+        "title": "Transfer when sender has zero balance",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_9bde082cd5@example.com",
+            "name": "j0LzVCpVxiKM"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "j0LzVCpVxiKM",
+            "email": "qa_9bde082cd5@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_9bde082cd5@example.com",
+              "actual": "qa_9bde082cd5@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "j0LzVCpVxiKM",
+              "actual": "j0LzVCpVxiKM",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer when sender has zero balance",
+        "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_055c1383d7@example.com",
+            "name": "GQimpCkpy4Sv"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "GQimpCkpy4Sv",
+            "email": "qa_055c1383d7@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_055c1383d7@example.com",
+              "actual": "qa_055c1383d7@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "GQimpCkpy4Sv",
+              "actual": "GQimpCkpy4Sv",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer when sender has zero balance",
+        "step_summary": "Transfer 10.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+        "step_role": "target",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004",
+            "comment": "hTSmVLb30knP"
+          },
+          "expected_status_code": 402,
+          "actual_status_code": 402,
+          "response_json": {
+            "error": "Insufficient funds",
+            "details": null
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "error",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "has_setup_steps",
+      "target_has_no_field_assertions"
+    ],
+    "audit": {
+      "verdict": "suspicious_pass",
+      "classification": "weak_assertions",
+      "confidence": 0.85,
+      "summary": "The scenario tests a failed transfer due to zero balance, but only validates the presence of an error field and the 402 status code. No explicit assertions were made on the error message content or specific error codes within the response body.",
+      "reasons": [
+        "Target step uses 'required_fields_only' assertion strength.",
+        "No field-level assertions exist for the error response body.",
+        "Business logic validation is shallow despite successful setup steps."
+      ],
+      "missingAssertions": [
+        "Explicit assertion on the error message string (e.g., 'Insufficient funds').",
+        "Assertion on specific error code/type if provided in the response body."
+      ],
+      "suspectedRootCause": null,
+      "recommendedAction": "add_coverage",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify if the error message 'Insufficient funds' is consistent across different zero-balance scenarios.",
+        "Add explicit field assertions for the error object in the target step."
+      ]
+    }
+  },
+  {
+    "title": "6th transfer in a single day exceeds count limit",
+    "endpoint_id": "transfer_between_users",
+    "passed": false,
+    "started_at_utc": "2026-04-07T20:16:42.401057+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-13",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.428572+00:00",
+    "steps": [
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_72a2f432e5@example.com",
+            "name": "wb0gzKK7Bvrk"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "wb0gzKK7Bvrk",
+            "email": "qa_72a2f432e5@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_72a2f432e5@example.com",
+              "actual": "qa_72a2f432e5@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_9c12b6bafd@example.com",
+            "name": "ew142ISFdZXu"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "ew142ISFdZXu",
+            "email": "qa_9c12b6bafd@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_9c12b6bafd@example.com",
+              "actual": "qa_9c12b6bafd@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Deposit 10.00 EUR to sender $${sender_id} wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 10.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "amount",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "operationId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "receiverId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "senderId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "status",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 4 of 5)",
+        "step_role": "setup",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 10.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 402,
+          "response_json": {
+            "error": "Insufficient funds",
+            "details": null
+          },
+          "response_text": null,
+          "error": "Expected status 200, got 402",
+          "assertions": []
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 5 of 5)",
+        "step_role": "setup",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": null,
+          "url": null,
+          "request_body": null,
+          "expected_status_code": null,
+          "actual_status_code": null,
+          "response_json": null,
+          "response_text": null,
+          "error": "Not executed because previous step failed: setup_5_transfer_between_users",
+          "assertions": []
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 6 of 5)",
+        "step_role": "setup",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": null,
+          "url": null,
+          "request_body": null,
+          "expected_status_code": null,
+          "actual_status_code": null,
+          "response_json": null,
+          "response_text": null,
+          "error": "Not executed because previous step failed: setup_5_transfer_between_users",
+          "assertions": []
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 5 of 5)",
+        "step_role": "setup",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": null,
+          "url": null,
+          "request_body": null,
+          "expected_status_code": null,
+          "actual_status_code": null,
+          "response_json": null,
+          "response_text": null,
+          "error": "Not executed because previous step failed: setup_5_transfer_between_users",
+          "assertions": []
+        }
+      },
+      {
+        "title": "6th transfer in a single day exceeds count limit",
+        "step_summary": "Attempt the 6th transfer of 10.00 EUR from $${sender_id} to $${receiver_id} to exceed the daily limit",
+        "step_role": "target",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": null,
+          "url": null,
+          "request_body": null,
+          "expected_status_code": null,
+          "actual_status_code": null,
+          "response_json": null,
+          "response_text": null,
+          "error": "Not executed because previous step failed: setup_5_transfer_between_users",
+          "assertions": []
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "scenario_failed",
+      "failed_step_index_present",
+      "failed_step_present",
+      "failed_target_step_present",
+      "http_status_mismatch",
+      "attempt_error_with_http_status",
+      "scenario_error_present"
+    ],
+    "audit": {
+      "verdict": "infra_fail",
+      "classification": "execution_ok",
+      "confidence": 0.9,
+      "summary": "The scenario failed during the setup phase because a transfer step unexpectedly returned a 402 Insufficient Funds error. This prevented the test from reaching the target step intended to validate the daily transfer limit.",
+      "reasons": [
+        "The failure occurred in a setup step (index 4) rather than the target step.",
+        "The error 'Insufficient funds' (402) contradicts the expected successful transfer (200) needed to reach the limit.",
+        "Subsequent setup and target steps were skipped due to this failure."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": "The sender's balance was insufficient to complete the required setup transfers, likely due to incorrect initial deposit amount or previous balance consumption.",
+      "recommendedAction": "review_mock",
+      "recommendedPriority": "high",
+      "followUpChecks": [
+        "Verify the initial deposit amount in step 2 matches the total required for all setup transfers.",
+        "Check if the sender's balance is being correctly updated/tracked between setup steps."
+      ]
+    }
+  },
+  {
+    "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+    "endpoint_id": "transfer_between_users",
+    "passed": false,
+    "started_at_utc": "2026-04-07T20:16:42.430163+00:00",
+    "caseId": "",
+    "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-14",
+    "id": null,
+    "finished_at_utc": "2026-04-07T20:16:42.456510+00:00",
+    "steps": [
+      {
+        "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+        "step_summary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_3c893f5d1f@example.com",
+            "name": "2XYNPVINeMLT"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1004",
+            "name": "2XYNPVINeMLT",
+            "email": "qa_3c893f5d1f@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_3c893f5d1f@example.com",
+              "actual": "qa_3c893f5d1f@example.com",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+        "step_summary": "Create a new user with email $${random_email_receiver} and name $${random_str_receiver}",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_af3ce60c61@example.com",
+            "name": "9TcZmFICnGpd"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "response_json": {
+            "userId": "u-1005",
+            "name": "9TcZmFICnGpd",
+            "email": "qa_af3ce60c61@example.com"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "email",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "name",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_af3ce60c61@example.com",
+              "actual": "qa_af3ce60c61@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "9TcZmFICnGpd",
+              "actual": "9TcZmFICnGpd",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+        "step_summary": "Deposit 1000.00 EUR into sender $${sender_id}'s wallet",
+        "step_role": "setup",
+        "passed": true,
+        "detail": {
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 1000.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 1000.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null,
+          "assertions": [
+            {
+              "path": "currency",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "newBalance",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "userId",
+              "operator": "exists",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+        "step_summary": "Transfer 4000.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+        "step_role": "setup",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 4000.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 402,
+          "response_json": {
+            "error": "Insufficient funds",
+            "details": null
+          },
+          "response_text": null,
+          "error": "Expected status 200, got 402",
+          "assertions": []
+        }
+      },
+      {
+        "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+        "step_summary": "Transfer 1000.01 EUR from sender $${sender_id} to receiver $${receiver_id} to exceed the 5,000 EUR daily limit",
+        "step_role": "target",
+        "passed": false,
+        "detail": {
+          "passed": false,
+          "method": null,
+          "url": null,
+          "request_body": null,
+          "expected_status_code": null,
+          "actual_status_code": null,
+          "response_json": null,
+          "response_text": null,
+          "error": "Not executed because previous step failed: setup_4_transfer_between_users",
+          "assertions": []
+        }
+      }
+    ],
+    "audit_status": "send_to_llm",
+    "audit_reasons": [
+      "scenario_failed",
+      "failed_step_index_present",
+      "failed_step_present",
+      "failed_target_step_present",
+      "http_status_mismatch",
+      "attempt_error_with_http_status",
+      "scenario_error_present"
+    ],
+    "audit": {
+      "verdict": "infra_fail",
+      "classification": "execution_ok",
+      "confidence": 1.0,
+      "summary": "The scenario failed during a setup step because a transfer of 4000.00 EUR resulted in a 402 Payment Required error due to insufficient funds. This prevented the target step from executing. The failure is a functional business logic error in the setup phase rather than an infrastructure issue.",
+      "reasons": [
+        "Setup step 3 failed with a 402 status code.",
+        "The error message 'Insufficient funds' indicates the sender's balance was inadequate for the requested setup amount.",
+        "The target step was never reached due to the preceding setup failure."
+      ],
+      "missingAssertions": [],
+      "suspectedRootCause": "Insufficient balance in the sender's wallet to complete the required setup transfer.",
+      "recommendedAction": "rerun_scenario",
+      "recommendedPriority": "medium",
+      "followUpChecks": [
+        "Verify the initial deposit amount in step 2 is sufficient for the subsequent transfer in step 3.",
+        "Check if the sender's balance is being correctly updated or if there are hidden fees."
+      ]
+    }
+  }
+]

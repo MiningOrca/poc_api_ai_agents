@@ -1,0 +1,204 @@
+{
+  "endpointId": "create_user",
+  "ideas": [
+    {
+      "id": "TC-CREATE-USER-1",
+      "endpointId": "create_user",
+      "title": "Create user with valid name and email",
+      "category": "positive",
+      "mode": "single",
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "email: required, string, must be unique in the system and have a valid email format",
+        "Success response code: 201"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 201,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-2",
+      "endpointId": "create_user",
+      "title": "Create user with name of exactly 1 character",
+      "category": "boundary",
+      "mode": "single",
+      "sourceRefs": [
+        "name: required, string 1–100 characters"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 201,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-3",
+      "endpointId": "create_user",
+      "title": "Create user with name of exactly 100 characters",
+      "category": "boundary",
+      "mode": "single",
+      "sourceRefs": [
+        "name: required, string 1–100 characters"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 201,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-4",
+      "endpointId": "create_user",
+      "title": "Create user with name exceeding 100 characters",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-5",
+      "endpointId": "create_user",
+      "title": "Create user with empty name",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-6",
+      "endpointId": "create_user",
+      "title": "Create user with missing name field",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "name: required, string 1–100 characters",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-7",
+      "endpointId": "create_user",
+      "title": "Create user with invalid email format",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "email: required, string, must be unique in the system and have a valid email format",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-8",
+      "endpointId": "create_user",
+      "title": "Create user with missing email field",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "email: required, string, must be unique in the system and have a valid email format",
+        "400: invalid data (e.g. empty name, invalid email format)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-CREATE-USER-9",
+      "endpointId": "create_user",
+      "title": "Create user with duplicate email",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "email: required, string, must be unique in the system and have a valid email format",
+        "409: email already exists"
+      ],
+      "setupReason": "An existing user with the same email must be created first to trigger the duplicate email conflict.",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "email"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "target",
+          "stepStatusCode": 409,
+          "producesContext": [],
+          "consumesContext": [
+            "email"
+          ]
+        }
+      ]
+    }
+  ]
+}

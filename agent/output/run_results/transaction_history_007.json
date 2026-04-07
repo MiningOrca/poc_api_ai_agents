@@ -1,0 +1,115 @@
+{
+  "title": "Get transaction history with limit at maximum boundary (100)",
+  "endpoint_id": "transaction_history",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:18:42.619928+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSACTION-HISTORY-7",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:18:42.641359+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "user_id": "u-1004"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Get transaction history with limit at maximum boundary (100)",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_e98258a6da@example.com",
+            "name": "buXQwtTxIgAU"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_e98258a6da@example.com",
+              "actual": "qa_e98258a6da@example.com",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "user_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "buXQwtTxIgAU",
+            "email": "qa_e98258a6da@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Get transaction history with limit at maximum boundary (100)",
+      "step_name": "target_2_transaction_history",
+      "step_role": "target",
+      "step_summary": "Get transaction history for user $${user_id} with limit set to the maximum boundary of 100",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=100",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "transactions",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

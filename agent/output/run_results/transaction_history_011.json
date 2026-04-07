@@ -1,0 +1,177 @@
+{
+  "title": "Get transaction history with offset beyond total record count",
+  "endpoint_id": "transaction_history",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:18:42.708228+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSACTION-HISTORY-11",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:18:42.730404+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "user_id": "u-1004"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Get transaction history with offset beyond total record count",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_c61378e55b@example.com",
+            "name": "LLQKulpj6vLk"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_c61378e55b@example.com",
+              "actual": "qa_c61378e55b@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "LLQKulpj6vLk",
+              "actual": "LLQKulpj6vLk",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "user_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "LLQKulpj6vLk",
+            "email": "qa_c61378e55b@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Get transaction history with offset beyond total record count",
+      "step_name": "setup_2_deposit_top_up_balance",
+      "step_role": "setup",
+      "step_summary": "Deposit 100.00 EUR into wallet for user $${user_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "currency",
+            "newBalance",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 2,
+      "scenario_title": "Get transaction history with offset beyond total record count",
+      "step_name": "target_3_transaction_history",
+      "step_role": "target",
+      "step_summary": "Get transaction history for user $${user_id} with an offset of 1000 to exceed total record count",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions?limit=20&offset=1000",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "transactions",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": []
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

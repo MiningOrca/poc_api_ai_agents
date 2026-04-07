@@ -1,0 +1,128 @@
+{
+  "title": "Deposit valid amount to existing user",
+  "endpoint_id": "deposit_top_up_balance",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:14:43.716335+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-1",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:14:43.804968+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "user_id": "u-1004"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Deposit valid amount to existing user",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_13ea6251c0@example.com",
+            "name": "wIMmf7b63EwE"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_13ea6251c0@example.com",
+              "actual": "qa_13ea6251c0@example.com",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "user_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "wIMmf7b63EwE",
+            "email": "qa_13ea6251c0@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Deposit valid amount to existing user",
+      "step_name": "target_2_deposit_top_up_balance",
+      "step_role": "target",
+      "step_summary": "Deposit 100.00 EUR to user $${user_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "currency",
+            "newBalance",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

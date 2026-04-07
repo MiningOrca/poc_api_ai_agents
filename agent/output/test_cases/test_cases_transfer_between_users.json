@@ -1,0 +1,683 @@
+{
+  "endpointId": "transfer_between_users",
+  "ideas": [
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-1",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer valid amount between two existing users",
+      "category": "positive",
+      "mode": "chain",
+      "sourceRefs": [
+        "senderId and receiverId: required, both users must exist",
+        "amount: number > 0, up to two decimal places",
+        "Success response code: 200"
+      ],
+      "setupReason": "Users must exist and sender must have sufficient balance before transfer",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-2",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer with amount of two decimal places",
+      "category": "positive",
+      "mode": "chain",
+      "sourceRefs": [
+        "amount: number > 0, up to two decimal places",
+        "Success response code: 200"
+      ],
+      "setupReason": "Users must exist and sender must have sufficient balance",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-3",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer entire balance leaving sender at zero",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "After the transfer, the sender's balance must not become negative",
+        "The balance cannot be negative"
+      ],
+      "setupReason": "Users must exist and sender must have a known exact balance to transfer fully",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-4",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "total outgoing amount per calendar day ≤ 5,000 EUR",
+        "Success response code: 200"
+      ],
+      "setupReason": "Users must exist and sender must have at least 5000 EUR deposited",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-5",
+      "endpointId": "transfer_between_users",
+      "title": "5th transfer in a single day succeeds (count limit boundary)",
+      "category": "boundary",
+      "mode": "chain",
+      "sourceRefs": [
+        "no more than 5 outgoing transfers per calendar day",
+        "Success response code: 200"
+      ],
+      "setupReason": "Sender must have made exactly 4 prior transfers today to test the boundary",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-6",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer with non-existent senderId",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "senderId and receiverId: required, both users must exist",
+        "404: sender or receiver not found"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 404,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-7",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer with non-existent receiverId",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "senderId and receiverId: required, both users must exist",
+        "404: sender or receiver not found"
+      ],
+      "setupReason": "Sender must exist to isolate the missing receiver scenario",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 404,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-8",
+      "endpointId": "transfer_between_users",
+      "title": "Self-transfer where senderId equals receiverId",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "senderId ≠ receiverId (self-transfers are not allowed)",
+        "400: invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+      ],
+      "setupReason": "User must exist to attempt a self-transfer",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "user_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-9",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer with amount of zero",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "amount: number > 0, up to two decimal places",
+        "400: invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-10",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer with negative amount",
+      "category": "negative",
+      "mode": "single",
+      "sourceRefs": [
+        "amount: number > 0, up to two decimal places",
+        "400: invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 400,
+          "producesContext": [],
+          "consumesContext": []
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-11",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer amount exceeding sender's balance",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "After the transfer, the sender's balance must not become negative",
+        "402: insufficient funds on the sender's account"
+      ],
+      "setupReason": "Users must exist and sender must have a known balance lower than the transfer amount",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 402,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-12",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer when sender has zero balance",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "After the transfer, the sender's balance must not become negative",
+        "402: insufficient funds on the sender's account"
+      ],
+      "setupReason": "Users must exist; sender has no deposit so balance is zero",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 402,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-13",
+      "endpointId": "transfer_between_users",
+      "title": "6th transfer in a single day exceeds count limit",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "no more than 5 outgoing transfers per calendar day",
+        "403: daily limit on number of operations exceeded"
+      ],
+      "setupReason": "Sender must have already made 5 transfers today to trigger the count limit",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 403,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "TC-TRANSFER-BETWEEN-USERS-14",
+      "endpointId": "transfer_between_users",
+      "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "category": "negative",
+      "mode": "chain",
+      "sourceRefs": [
+        "total outgoing amount per calendar day ≤ 5,000 EUR",
+        "429: daily amount limit exceeded"
+      ],
+      "setupReason": "Sender must have already sent 5000 EUR today so the next transfer exceeds the limit",
+      "steps": [
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "sender_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "stepStatusCode": 201,
+          "producesContext": [
+            "receiver_id"
+          ],
+          "consumesContext": []
+        },
+        {
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "stepStatusCode": 200,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        },
+        {
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "stepStatusCode": 429,
+          "producesContext": [],
+          "consumesContext": [
+            "sender_id",
+            "receiver_id"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "title": "Deposit with unsupported currency",
+  "endpoint_id": "deposit_top_up_balance",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:14:43.903415+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-5",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:14:43.927865+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "user_id": "u-1004"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Deposit with unsupported currency",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_d5c9819b81@example.com",
+            "name": "5S7x3vxO4HNx"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_d5c9819b81@example.com",
+              "actual": "qa_d5c9819b81@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "5S7x3vxO4HNx",
+              "actual": "5S7x3vxO4HNx",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "user_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "5S7x3vxO4HNx",
+            "email": "qa_d5c9819b81@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Deposit with unsupported currency",
+      "step_name": "target_2_deposit_top_up_balance",
+      "step_role": "target",
+      "step_summary": "Deposit with an unsupported currency (USD) for user $${user_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "USD",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "currency",
+                "message": "Input should be 'EUR'"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

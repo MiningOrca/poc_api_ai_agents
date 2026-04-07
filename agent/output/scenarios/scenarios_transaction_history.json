@@ -1,0 +1,1717 @@
+{
+  "endpointId": "transaction_history",
+  "scenarios": [
+    {
+      "title": "Get transaction history for user with no transactions",
+      "category": "positive",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "userId",
+        "success response code: 200"
+      ],
+      "setupReason": "A user must exist before transaction history can be retrieved; no transactions are made so the list is empty.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with no transactions",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {},
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-1",
+      "id": "TS-TRANSACTION-HISTORY-1"
+    },
+    {
+      "title": "Get transaction history for user with deposit transactions",
+      "category": "positive",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "userId",
+        "success response code: 200"
+      ],
+      "setupReason": "A user must exist and have at least one deposit so that the history contains records.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into wallet for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_3_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id}",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {},
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-2",
+      "id": "TS-TRANSACTION-HISTORY-2"
+    },
+    {
+      "title": "Get transaction history for user with transfer transactions",
+      "category": "positive",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "userId",
+        "success response code: 200",
+        "A user cannot transfer money to themselves"
+      ],
+      "setupReason": "Two users must exist, a deposit must fund the sender, and a transfer must be made so that transfer records appear in history.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into user $${sender_id}'s wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 100.00 EUR from $${sender_id} to $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 100.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 100.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 4,
+          "endIndex": 4,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_5_transaction_history",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${sender_id}",
+            "pathParams": {
+              "userId": "$${sender_id}"
+            },
+            "queryParams": {},
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-3",
+      "id": "TS-TRANSACTION-HISTORY-3"
+    },
+    {
+      "title": "Get transaction history with non-existent userId",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "sourceRefs": [
+        "404: user not found",
+        "userId"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_1_transaction_history",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for a non-existent userId 'non_existent_user_123'",
+            "pathParams": {
+              "userId": "non_existent_user_123"
+            },
+            "queryParams": {},
+            "body": null,
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 404,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-4",
+      "id": "TS-TRANSACTION-HISTORY-4"
+    },
+    {
+      "title": "Get transaction history with invalid limit value",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "400: invalid limit/offset parameters",
+        "limit"
+      ],
+      "setupReason": "A user must exist to reach the parameter validation error path.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with an invalid limit value of -1",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "limit": -1
+            },
+            "body": null,
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-5",
+      "id": "TS-TRANSACTION-HISTORY-5"
+    },
+    {
+      "title": "Get transaction history with invalid offset value",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "400: invalid limit/offset parameters",
+        "offset"
+      ],
+      "setupReason": "A user must exist to reach the parameter validation error path.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with an invalid offset value of -1",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "offset": -1
+            },
+            "body": null,
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-6",
+      "id": "TS-TRANSACTION-HISTORY-6"
+    },
+    {
+      "title": "Get transaction history with limit at maximum boundary (100)",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "limit",
+        "maximum 100"
+      ],
+      "setupReason": "A user must exist to test the maximum allowed limit value.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with limit set to the maximum boundary of 100",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "limit": 100
+            },
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-7",
+      "id": "TS-TRANSACTION-HISTORY-7"
+    },
+    {
+      "title": "Get transaction history with limit exceeding maximum (101)",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "400: invalid limit/offset parameters",
+        "limit",
+        "maximum 100"
+      ],
+      "setupReason": "A user must exist to test the over-maximum limit boundary.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with limit set to 101",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "limit": 101
+            },
+            "body": null,
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-8",
+      "id": "TS-TRANSACTION-HISTORY-8"
+    },
+    {
+      "title": "Get transaction history with limit of 1 (minimum positive)",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "limit",
+        "default 20, maximum 100"
+      ],
+      "setupReason": "A user must exist to test the minimum positive limit value.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with limit set to 1",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "limit": 1
+            },
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-9",
+      "id": "TS-TRANSACTION-HISTORY-9"
+    },
+    {
+      "title": "Get transaction history with offset zero",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "offset",
+        "offset for pagination"
+      ],
+      "setupReason": "A user must exist to test offset at zero boundary.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_2_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with offset 0",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "offset": 0
+            },
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-10",
+      "id": "TS-TRANSACTION-HISTORY-10"
+    },
+    {
+      "title": "Get transaction history with offset beyond total record count",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "offset",
+        "offset for pagination",
+        "success response code: 200"
+      ],
+      "setupReason": "A user with a known number of transactions must exist so offset can exceed the total count.",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_2_deposit_top_up_balance",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into wallet for user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${user_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "transaction_history",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "GET",
+            "path": "/wallets/{userId}/transactions"
+          },
+          "inputStep": {
+            "endpointId": "transaction_history",
+            "stepRole": "target",
+            "stepName": "target_3_transaction_history",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Get transaction history for user $${user_id} with an offset of 1000 to exceed total record count",
+            "pathParams": {
+              "userId": "$${user_id}"
+            },
+            "queryParams": {
+              "limit": 20,
+              "offset": 1000
+            },
+            "body": null,
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "transactions",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${user_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSACTION-HISTORY-11",
+      "id": "TS-TRANSACTION-HISTORY-11"
+    }
+  ]
+}

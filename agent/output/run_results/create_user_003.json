@@ -1,0 +1,72 @@
+{
+  "title": "Create user with name of exactly 100 characters",
+  "endpoint_id": "create_user",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:13:48.735399+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-CREATE-USER-3",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:13:48.773359+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {},
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Create user with name of exactly 100 characters",
+      "step_name": "target_1_create_user",
+      "step_role": "target",
+      "step_summary": "Create user with a name of exactly 100 characters",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_bae9551ed7@example.com",
+            "name": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_bae9551ed7@example.com",
+              "actual": "qa_bae9551ed7@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789",
+              "actual": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "A123456789B123456789C123456789D123456789E123456789F123456789G123456789H123456789I123456789J123456789",
+            "email": "qa_bae9551ed7@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

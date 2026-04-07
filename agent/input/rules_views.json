@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "source_file": "/Users/egorkhalzov/PycharmProjects/APIAgent/agent/input/spec_sections.json",
+    "generator": "RulesViewsBuilder",
+    "version": "1.0.0",
+    "format": "rules_views"
+  },
+  "general_rules_view": {
+    "section": "3.1",
+    "title": "General rules",
+    "items": [
+      "All requests and responses are in JSON format.",
+      "There is only one currency for simplicity: `\"EUR\"`.",
+      "The balance cannot be negative.",
+      "A user cannot transfer money to themselves.",
+      "There is a daily limit:",
+      "no more than 5 outgoing transfers per calendar day per sender user;",
+      "no more than 5,000 EUR of outgoing transfers per calendar day per sender user."
+    ]
+  },
+  "endpoint_rules_views": [
+    {
+      "endpoint_id": "create_user",
+      "section_number": "3.2.1",
+      "title": "Create user",
+      "method": "POST",
+      "path": "/users",
+      "parameters": [],
+      "endpoint_rules": [
+        "`name`: required, string 1–100 characters.",
+        "`email`: required, string, must be unique in the system and have a valid email format."
+      ],
+      "error_responses": [
+        {
+          "status_code": 400,
+          "description": "invalid data (e.g. empty name, invalid email format)"
+        },
+        {
+          "status_code": 409,
+          "description": "email already exists"
+        }
+      ],
+      "success_status_code": 201
+    },
+    {
+      "endpoint_id": "deposit_top_up_balance",
+      "section_number": "3.2.2",
+      "title": "Deposit (top up balance)",
+      "method": "POST",
+      "path": "/wallets/deposit",
+      "parameters": [],
+      "endpoint_rules": [
+        "`userId`: required, must refer to an existing user.",
+        "`amount`: required, number > 0, up to two decimal places.",
+        "`currency`: currently only `\"EUR\"` is supported."
+      ],
+      "error_responses": [
+        {
+          "status_code": 400,
+          "description": "invalid data (negative or zero amount, wrong amount format, unsupported currency)"
+        },
+        {
+          "status_code": 404,
+          "description": "user not found"
+        }
+      ],
+      "success_status_code": 200
+    },
+    {
+      "endpoint_id": "transfer_between_users",
+      "section_number": "3.2.3",
+      "title": "Transfer between users",
+      "method": "POST",
+      "path": "/wallets/transfer",
+      "parameters": [],
+      "endpoint_rules": [
+        "`senderId` and `receiverId`: required, both users must exist.",
+        "`senderId ≠ receiverId` (self-transfers are not allowed).",
+        "`amount`: number > 0, up to two decimal places.",
+        "After the transfer, the sender’s balance must not become negative.",
+        "Daily limits for the sender:",
+        "no more than 5 outgoing transfers per calendar day;",
+        "total outgoing amount per calendar day ≤ 5,000 EUR."
+      ],
+      "error_responses": [
+        {
+          "status_code": 400,
+          "description": "invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+        },
+        {
+          "status_code": 402,
+          "description": "insufficient funds on the sender’s account"
+        },
+        {
+          "status_code": 403,
+          "description": "daily limit on number of operations exceeded"
+        },
+        {
+          "status_code": 429,
+          "description": "daily amount limit exceeded"
+        },
+        {
+          "status_code": 404,
+          "description": "sender or receiver not found"
+        }
+      ],
+      "success_status_code": 200
+    },
+    {
+      "endpoint_id": "transaction_history",
+      "section_number": "3.2.4",
+      "title": "Transaction history",
+      "method": "GET",
+      "path": "/wallets/{userId}/transactions?limit=20&offset=0",
+      "parameters": [
+        {
+          "name": "`userId`",
+          "description": "user identifier."
+        },
+        {
+          "name": "`limit`",
+          "description": "how many records to return (default 20, maximum 100)."
+        },
+        {
+          "name": "`offset`",
+          "description": "offset for pagination."
+        }
+      ],
+      "endpoint_rules": [],
+      "error_responses": [
+        {
+          "status_code": 400,
+          "description": "invalid limit/offset parameters"
+        },
+        {
+          "status_code": 404,
+          "description": "user not found"
+        }
+      ],
+      "success_status_code": 200
+    }
+  ]
+}

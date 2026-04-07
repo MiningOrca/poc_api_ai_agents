@@ -1,0 +1,333 @@
+{
+  "title": "Get transaction history for user with transfer transactions",
+  "endpoint_id": "transaction_history",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:18:42.512518+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSACTION-HISTORY-3",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:18:42.548365+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "sender_id": "u-1004",
+    "receiver_id": "u-1005"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Get transaction history for user with transfer transactions",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_c39a295b0b@example.com",
+            "name": "yt5RsI2cOr1m"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_c39a295b0b@example.com",
+              "actual": "qa_c39a295b0b@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "yt5RsI2cOr1m",
+              "actual": "yt5RsI2cOr1m",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "sender_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "yt5RsI2cOr1m",
+            "email": "qa_c39a295b0b@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Get transaction history for user with transfer transactions",
+      "step_name": "setup_2_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_b4eb109177@example.com",
+            "name": "tecUZj2K5Zzo"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_b4eb109177@example.com",
+              "actual": "qa_b4eb109177@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "tecUZj2K5Zzo",
+              "actual": "tecUZj2K5Zzo",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "receiver_id",
+              "sourcePath": "$.userId",
+              "value": "u-1005"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1005",
+            "name": "tecUZj2K5Zzo",
+            "email": "qa_b4eb109177@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 2,
+      "scenario_title": "Get transaction history for user with transfer transactions",
+      "step_name": "setup_3_deposit_top_up_balance",
+      "step_role": "setup",
+      "step_summary": "Deposit 100.00 EUR into user $${sender_id}'s wallet",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "currency",
+            "newBalance",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 3,
+      "scenario_title": "Get transaction history for user with transfer transactions",
+      "step_name": "setup_4_transfer_between_users",
+      "step_role": "setup",
+      "step_summary": "Transfer 100.00 EUR from $${sender_id} to $${receiver_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 100.0,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "amount",
+            "currency",
+            "operationId",
+            "receiverId",
+            "senderId",
+            "status"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 100.0,
+              "actual": 100.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.senderId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            },
+            {
+              "path": "$.receiverId",
+              "operator": "equals",
+              "expected": "u-1005",
+              "actual": "u-1005",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 100.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 4,
+      "scenario_title": "Get transaction history for user with transfer transactions",
+      "step_name": "target_5_transaction_history",
+      "step_role": "target",
+      "step_summary": "Get transaction history for user $${sender_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "GET",
+          "url": "http://localhost:8000/wallets/u-1004/transactions",
+          "request_body": null,
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "transactions",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "transactions": [
+              {
+                "operationId": "tr-9001",
+                "type": "OUTGOING",
+                "amount": 100.0,
+                "currency": "EUR",
+                "timestamp": "2026-03-24T10:00:01Z",
+                "counterpartyId": "u-1005",
+                "comment": null
+              },
+              {
+                "operationId": "dep-7001",
+                "type": "DEPOSIT",
+                "amount": 100.0,
+                "currency": "EUR",
+                "timestamp": "2026-03-24T10:00:00Z",
+                "counterpartyId": null,
+                "comment": null
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

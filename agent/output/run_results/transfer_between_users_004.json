@@ -1,0 +1,251 @@
+{
+  "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+  "endpoint_id": "transfer_between_users",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:16:42.167900+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-4",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:16:42.195587+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "sender_id": "u-1004",
+    "receiver_id": "u-1005"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_a598ec46ae@example.com",
+            "name": "OENMMsl6oDnG"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_a598ec46ae@example.com",
+              "actual": "qa_a598ec46ae@example.com",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "sender_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "OENMMsl6oDnG",
+            "email": "qa_a598ec46ae@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+      "step_name": "setup_2_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_59c25c6e19@example.com",
+            "name": "WhF1WRpAB4m8"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_59c25c6e19@example.com",
+              "actual": "qa_59c25c6e19@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "WhF1WRpAB4m8",
+              "actual": "WhF1WRpAB4m8",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "receiver_id",
+              "sourcePath": "$.userId",
+              "value": "u-1005"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1005",
+            "name": "WhF1WRpAB4m8",
+            "email": "qa_59c25c6e19@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 2,
+      "scenario_title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+      "step_name": "setup_3_deposit_top_up_balance",
+      "step_role": "setup",
+      "step_summary": "Deposit 5000 EUR into sender $${sender_id} wallet",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "amount": 5000,
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "currency",
+            "newBalance",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            },
+            {
+              "path": "$.userId",
+              "operator": "equals",
+              "expected": "u-1004",
+              "actual": "u-1004",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "userId": "u-1004",
+            "newBalance": 5000.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 3,
+      "scenario_title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+      "step_name": "target_4_transfer_between_users",
+      "step_role": "target",
+      "step_summary": "Transfer 5000 EUR from $${sender_id} to $${receiver_id}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 5000,
+            "currency": "EUR",
+            "receiverId": "u-1005",
+            "senderId": "u-1004"
+          },
+          "expected_status_code": 200,
+          "actual_status_code": 200,
+          "required_fields_checked": [
+            "amount",
+            "currency",
+            "operationId",
+            "receiverId",
+            "senderId",
+            "status"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.amount",
+              "operator": "equals",
+              "expected": 5000,
+              "actual": 5000.0,
+              "passed": true
+            },
+            {
+              "path": "$.currency",
+              "operator": "equals",
+              "expected": "EUR",
+              "actual": "EUR",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [],
+          "response_json": {
+            "operationId": "tr-9001",
+            "status": "SUCCESS",
+            "senderId": "u-1004",
+            "receiverId": "u-1005",
+            "amount": 5000.0,
+            "currency": "EUR"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

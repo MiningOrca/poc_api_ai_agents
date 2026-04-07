@@ -1,0 +1,109 @@
+{
+  "title": "Create user with duplicate email",
+  "endpoint_id": "create_user",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:13:48.926534+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-CREATE-USER-9",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:13:48.951827+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "email": "qa_451358f526@example.com"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Create user with duplicate email",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create user with email $${random_email_user1}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_451358f526@example.com",
+            "name": "VqyPxlNgksP0"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_451358f526@example.com",
+              "actual": "qa_451358f526@example.com",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "email",
+              "sourcePath": "$.email",
+              "value": "qa_451358f526@example.com"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "VqyPxlNgksP0",
+            "email": "qa_451358f526@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Create user with duplicate email",
+      "step_name": "target_2_create_user",
+      "step_role": "target",
+      "step_summary": "Create user with duplicate email $${email}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_451358f526@example.com",
+            "name": "rs8BcoYYE39p"
+          },
+          "expected_status_code": 409,
+          "actual_status_code": 409,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Email already exists",
+            "details": null
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

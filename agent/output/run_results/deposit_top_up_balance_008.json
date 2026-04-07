@@ -1,0 +1,121 @@
+{
+  "title": "Deposit with missing amount field",
+  "endpoint_id": "deposit_top_up_balance",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:14:43.975256+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-DEPOSIT-TOP-UP-BALANCE-8",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:14:44.002000+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {
+    "user_id": "u-1004"
+  },
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Deposit with missing amount field",
+      "step_name": "setup_1_create_user",
+      "step_role": "setup",
+      "step_summary": "Create a user with email $${random_email_user} and name $${random_str_name}",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/users",
+          "request_body": {
+            "email": "qa_f0f16ed261@example.com",
+            "name": "2SZsAYjbfcE7"
+          },
+          "expected_status_code": 201,
+          "actual_status_code": 201,
+          "required_fields_checked": [
+            "email",
+            "name",
+            "userId"
+          ],
+          "field_assertions_checked": [
+            {
+              "path": "$.email",
+              "operator": "equals",
+              "expected": "qa_f0f16ed261@example.com",
+              "actual": "qa_f0f16ed261@example.com",
+              "passed": true
+            },
+            {
+              "path": "$.name",
+              "operator": "equals",
+              "expected": "2SZsAYjbfcE7",
+              "actual": "2SZsAYjbfcE7",
+              "passed": true
+            }
+          ],
+          "produced_bindings": [
+            {
+              "contextKey": "user_id",
+              "sourcePath": "$.userId",
+              "value": "u-1004"
+            }
+          ],
+          "response_json": {
+            "userId": "u-1004",
+            "name": "2SZsAYjbfcE7",
+            "email": "qa_f0f16ed261@example.com"
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "index": 1,
+      "scenario_title": "Deposit with missing amount field",
+      "step_name": "target_2_deposit_top_up_balance",
+      "step_role": "target",
+      "step_summary": "Deposit to wallet for user $${user_id} with missing amount field",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/deposit",
+          "request_body": {
+            "currency": "EUR",
+            "userId": "u-1004"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Field required"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}

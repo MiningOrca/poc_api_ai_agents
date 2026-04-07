@@ -1,0 +1,3688 @@
+{
+  "endpointId": "transfer_between_users",
+  "scenarios": [
+    {
+      "title": "Transfer valid amount between two existing users",
+      "category": "positive",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "senderId and receiverId: required, both users must exist",
+        "amount: number > 0, up to two decimal places",
+        "Success response code: 200"
+      ],
+      "setupReason": "Users must exist and sender must have sufficient balance before transfer",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_sender} and name $${random_str_sender}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_sender}",
+              "name": "$${random_str_sender}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_sender}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_sender}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a receiver user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into sender $${sender_id} wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 100.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 100.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 100.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-1",
+      "id": "TS-TRANSFER-BETWEEN-USERS-1"
+    },
+    {
+      "title": "Transfer with amount of two decimal places",
+      "category": "positive",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "amount: number > 0, up to two decimal places",
+        "Success response code: 200"
+      ],
+      "setupReason": "Users must exist and sender must have sufficient balance",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 10.55 EUR to sender $${sender_id} wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.55,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.55 EUR from $${sender_id} to $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.55,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.55
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.55
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-2",
+      "id": "TS-TRANSFER-BETWEEN-USERS-2"
+    },
+    {
+      "title": "Transfer entire balance leaving sender at zero",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "After the transfer, the sender's balance must not become negative",
+        "The balance cannot be negative"
+      ],
+      "setupReason": "Users must exist and sender must have a known exact balance to transfer fully",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into wallet for sender $${sender_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 100.00 EUR from sender $${sender_id} to receiver $${receiver_id} to leave zero balance",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 100.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 100.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-3",
+      "id": "TS-TRANSFER-BETWEEN-USERS-3"
+    },
+    {
+      "title": "Transfer exactly 5,000 EUR in a single day (daily amount limit boundary)",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "total outgoing amount per calendar day ≤ 5,000 EUR",
+        "Success response code: 200"
+      ],
+      "setupReason": "Users must exist and sender must have at least 5000 EUR deposited",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 5000 EUR into sender $${sender_id} wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 5000,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 5000 EUR from $${sender_id} to $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 5000,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 5000
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 5000
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-4",
+      "id": "TS-TRANSFER-BETWEEN-USERS-4"
+    },
+    {
+      "title": "5th transfer in a single day succeeds (count limit boundary)",
+      "category": "boundary",
+      "mode": "chain",
+      "expectedStatusCode": 200,
+      "sourceRefs": [
+        "no more than 5 outgoing transfers per calendar day",
+        "Success response code: 200"
+      ],
+      "setupReason": "Sender must have made exactly 4 prior transfers today to test the boundary",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into sender_id wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 4,
+          "endIndex": 4,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_5_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (5th transfer of the day)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 5,
+          "endIndex": 5,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_6_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (4th transfer of the day)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 6,
+          "endIndex": 6,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_7_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (5th transfer of the day)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 7,
+          "endIndex": 7,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_8_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (5th transfer of the day)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-5",
+      "id": "TS-TRANSFER-BETWEEN-USERS-5"
+    },
+    {
+      "title": "Transfer with non-existent senderId",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "sourceRefs": [
+        "senderId and receiverId: required, both users must exist",
+        "404: sender or receiver not found"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_1_transfer_between_users",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer EUR $${random_decimal_amount} from non-existent senderId 'non-existent-user-id' to receiverId $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": "$${random_decimal_amount}",
+              "currency": "EUR",
+              "receiverId": "$${random_str_receiver}",
+              "senderId": "non-existent-user-id"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 404,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-6",
+      "id": "TS-TRANSFER-BETWEEN-USERS-6"
+    },
+    {
+      "title": "Transfer with non-existent receiverId",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 404,
+      "sourceRefs": [
+        "senderId and receiverId: required, both users must exist",
+        "404: sender or receiver not found"
+      ],
+      "setupReason": "Sender must exist to isolate the missing receiver scenario",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_sender} and name $${random_str_sender}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_sender}",
+              "name": "$${random_str_sender}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_sender}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_sender}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_2_transfer_between_users",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer EUR 100.00 from $${sender_id} to a non-existent receiverId 'non_existent_user_123'",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "receiverId": "non_existent_user_123",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 404,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-7",
+      "id": "TS-TRANSFER-BETWEEN-USERS-7"
+    },
+    {
+      "title": "Self-transfer where senderId equals receiverId",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "senderId ≠ receiverId (self-transfers are not allowed)",
+        "400: invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+      ],
+      "setupReason": "User must exist to attempt a self-transfer",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "user_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "user_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_2_transfer_between_users",
+            "consumesContext": [
+              "user_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer EUR 100.00 from user $${user_id} to the same user $${user_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "receiverId": "$${user_id}",
+              "senderId": "$${user_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-8",
+      "id": "TS-TRANSFER-BETWEEN-USERS-8"
+    },
+    {
+      "title": "Transfer with amount of zero",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "amount: number > 0, up to two decimal places",
+        "400: invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_1_transfer_between_users",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 0 EUR between users",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 0,
+              "currency": "EUR",
+              "receiverId": "$${random_str_receiverId}",
+              "senderId": "$${random_str_senderId}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-9",
+      "id": "TS-TRANSFER-BETWEEN-USERS-9"
+    },
+    {
+      "title": "Transfer with negative amount",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "sourceRefs": [
+        "amount: number > 0, up to two decimal places",
+        "400: invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)"
+      ],
+      "setupReason": null,
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_1_transfer_between_users",
+            "consumesContext": []
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer -10.00 EUR from $${random_str_senderId} to $${random_str_receiverId}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": -10.0,
+              "currency": "EUR",
+              "receiverId": "$${random_str_receiverId}",
+              "senderId": "$${random_str_senderId}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 400,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-10",
+      "id": "TS-TRANSFER-BETWEEN-USERS-10"
+    },
+    {
+      "title": "Transfer amount exceeding sender's balance",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 402,
+      "sourceRefs": [
+        "After the transfer, the sender's balance must not become negative",
+        "402: insufficient funds on the sender's account"
+      ],
+      "setupReason": "Users must exist and sender must have a known balance lower than the transfer amount",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 100.00 EUR into sender $${sender_id} wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 100.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 150.00 EUR from sender $${sender_id} to receiver $${receiver_id} exceeding the 100.00 EUR balance",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 150.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 402,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-11",
+      "id": "TS-TRANSFER-BETWEEN-USERS-11"
+    },
+    {
+      "title": "Transfer when sender has zero balance",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 402,
+      "sourceRefs": [
+        "After the transfer, the sender's balance must not become negative",
+        "402: insufficient funds on the sender's account"
+      ],
+      "setupReason": "Users must exist; sender has no deposit so balance is zero",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_3_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 402,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-12",
+      "id": "TS-TRANSFER-BETWEEN-USERS-12"
+    },
+    {
+      "title": "6th transfer in a single day exceeds count limit",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 403,
+      "sourceRefs": [
+        "no more than 5 outgoing transfers per calendar day",
+        "403: daily limit on number of operations exceeded"
+      ],
+      "setupReason": "Sender must have already made 5 transfers today to trigger the count limit",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 10.00 EUR to sender $${sender_id} wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 4,
+          "endIndex": 4,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_5_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 4 of 5)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 5,
+          "endIndex": 5,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_6_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 5 of 5)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 6,
+          "endIndex": 6,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_7_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 6 of 5)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 7,
+          "endIndex": 7,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_8_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 10.00 EUR from $${sender_id} to $${receiver_id} (Setup transfer 5 of 5)",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 10.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 8,
+          "endIndex": 8,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_9_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Attempt the 6th transfer of 10.00 EUR from $${sender_id} to $${receiver_id} to exceed the daily limit",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 10.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 403,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-13",
+      "id": "TS-TRANSFER-BETWEEN-USERS-13"
+    },
+    {
+      "title": "Transfer that pushes daily outgoing total above 5,000 EUR",
+      "category": "negative",
+      "mode": "chain",
+      "expectedStatusCode": 429,
+      "sourceRefs": [
+        "total outgoing amount per calendar day ≤ 5,000 EUR",
+        "429: daily amount limit exceeded"
+      ],
+      "setupReason": "Sender must have already sent 5000 EUR today so the next transfer exceeds the limit",
+      "steps": [
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 0,
+          "endIndex": 0,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_1_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "sender_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a new user with email $${random_email_user} and name $${random_str_user}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_user}",
+              "name": "$${random_str_user}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "sender_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_user}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 1,
+          "endIndex": 1,
+          "endpointId": "create_user",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/users"
+          },
+          "inputStep": {
+            "endpointId": "create_user",
+            "stepRole": "setup",
+            "stepName": "setup_2_create_user",
+            "consumesContext": []
+          },
+          "outputContextPlan": [
+            {
+              "contextKey": "receiver_id",
+              "requiredForNextSteps": true
+            }
+          ],
+          "executionDraft": {
+            "stepSummary": "Create a new user with email $${random_email_receiver} and name $${random_str_receiver}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "email": "$${random_email_receiver}",
+              "name": "$${random_str_receiver}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ],
+            "produceBinding": [
+              {
+                "contextKey": "receiver_id",
+                "sourcePath": "$.userId"
+              }
+            ]
+          },
+          "expect": {
+            "statusCode": 201,
+            "requiredFields": [
+              "email",
+              "name",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.email",
+                "operator": "equals",
+                "expected": "$${random_email_receiver}"
+              },
+              {
+                "path": "$.name",
+                "operator": "equals",
+                "expected": "$${random_str_receiver}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 2,
+          "endIndex": 2,
+          "endpointId": "deposit_top_up_balance",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/deposit"
+          },
+          "inputStep": {
+            "endpointId": "deposit_top_up_balance",
+            "stepRole": "setup",
+            "stepName": "setup_3_deposit_top_up_balance",
+            "consumesContext": [
+              "sender_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Deposit 1000.00 EUR into sender $${sender_id}'s wallet",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 1000.0,
+              "currency": "EUR",
+              "userId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "currency",
+              "newBalance",
+              "userId"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.userId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 3,
+          "endIndex": 3,
+          "endpointId": "transfer_between_users",
+          "stepRole": "setup",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "setup",
+            "stepName": "setup_4_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 4000.00 EUR from sender $${sender_id} to receiver $${receiver_id}",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 4000.0,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}"
+            },
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 4000.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 200,
+            "requiredFields": [
+              "amount",
+              "currency",
+              "operationId",
+              "receiverId",
+              "senderId",
+              "status"
+            ],
+            "fieldAssertions": [
+              {
+                "path": "$.amount",
+                "operator": "equals",
+                "expected": 4000.0
+              },
+              {
+                "path": "$.currency",
+                "operator": "equals",
+                "expected": "EUR"
+              },
+              {
+                "path": "$.senderId",
+                "operator": "equals",
+                "expected": "$${sender_id}"
+              },
+              {
+                "path": "$.receiverId",
+                "operator": "equals",
+                "expected": "$${receiver_id}"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "single",
+          "times": 1,
+          "index": 4,
+          "endIndex": 4,
+          "endpointId": "transfer_between_users",
+          "stepRole": "target",
+          "contractRef": {
+            "method": "POST",
+            "path": "/wallets/transfer"
+          },
+          "inputStep": {
+            "endpointId": "transfer_between_users",
+            "stepRole": "target",
+            "stepName": "target_5_transfer_between_users",
+            "consumesContext": [
+              "sender_id",
+              "receiver_id"
+            ]
+          },
+          "outputContextPlan": [],
+          "executionDraft": {
+            "stepSummary": "Transfer 1000.01 EUR from sender $${sender_id} to receiver $${receiver_id} to exceed the 5,000 EUR daily limit",
+            "pathParams": {},
+            "queryParams": {},
+            "body": {
+              "amount": 1000.01,
+              "currency": "EUR",
+              "receiverId": "$${receiver_id}",
+              "senderId": "$${sender_id}",
+              "comment": "$${random_str_comment}"
+            },
+            "fieldAssertions": [],
+            "produceBinding": []
+          },
+          "expect": {
+            "statusCode": 429,
+            "requiredFields": [
+              "error"
+            ],
+            "fieldAssertions": []
+          }
+        }
+      ],
+      "parentTestCaseId": "TC-TRANSFER-BETWEEN-USERS-14",
+      "id": "TS-TRANSFER-BETWEEN-USERS-14"
+    }
+  ]
+}

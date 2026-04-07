@@ -1,0 +1,61 @@
+{
+  "title": "Transfer with amount of zero",
+  "endpoint_id": "transfer_between_users",
+  "passed": true,
+  "started_at_utc": "2026-04-07T20:16:42.302263+00:00",
+  "caseId": "",
+  "scenarioId": "TR-TS-TRANSFER-BETWEEN-USERS-9",
+  "id": null,
+  "finished_at_utc": "2026-04-07T20:16:42.323035+00:00",
+  "test_state_reset_attempted": true,
+  "test_state_reset_passed": true,
+  "test_state_reset_status_code": 200,
+  "failed_step_index": null,
+  "shared_context": {},
+  "steps": [
+    {
+      "index": 0,
+      "scenario_title": "Transfer with amount of zero",
+      "step_name": "target_1_transfer_between_users",
+      "step_role": "target",
+      "step_summary": "Transfer 0 EUR between users",
+      "kind": "single",
+      "times": 1,
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "passed": true,
+          "method": "POST",
+          "url": "http://localhost:8000/wallets/transfer",
+          "request_body": {
+            "amount": 0,
+            "currency": "EUR",
+            "receiverId": "R1Q4RzQ0vX2v",
+            "senderId": "Woky6VsbJLJn"
+          },
+          "expected_status_code": 400,
+          "actual_status_code": 400,
+          "required_fields_checked": [
+            "error"
+          ],
+          "field_assertions_checked": [],
+          "produced_bindings": [],
+          "response_json": {
+            "error": "Invalid request data",
+            "details": [
+              {
+                "field": "amount",
+                "message": "Value error, Amount must be greater than 0"
+              }
+            ]
+          },
+          "response_text": null,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "error": null
+}
