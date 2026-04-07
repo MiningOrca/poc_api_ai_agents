@@ -1,3 +1,17 @@
+import re
+
+
+def extract_json_payload(text: str) -> str:
+    stripped = text.strip()
+
+    if stripped.startswith("```"):
+        match = re.search(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
+        if match:
+            return match.group(1).strip()
+
+    return stripped
+
+
 def _render_section_value(value: object) -> list[str]:
     if value is None:
         return []

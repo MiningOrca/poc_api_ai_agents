@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from agent.llm.client.llm_client import LlmClient, LlmRequest
-from agent.llm.prompt_util import add_section
+from agent.llm.prompt_util import add_section, extract_json_payload
 from agent.llm.test_designer.test_designer_model import TestIdeaBundle
 
 
@@ -75,7 +75,7 @@ class LlmTestDesigner:
         )
 
         response = await self._llm_client.generate(request)
-        raw_json = self._extract_json_payload(response.text)
+        raw_json = extract_json_payload(response.text)
         bundle = TestIdeaBundle.model_validate_json(raw_json)
         # should be some retrie mechanism but not for poc
         self._post_validate_bundle(
@@ -249,13 +249,3 @@ class LlmTestDesigner:
 
             seen_fingerprints.add(fingerprint)
 
-    @staticmethod
-    def _extract_json_payload(text: str) -> str:
-        stripped = text.strip()
-
-        if stripped.startswith("```"):
-            match = re.search(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
-            if match:
-                return match.group(1).strip()
-
-        return stripped

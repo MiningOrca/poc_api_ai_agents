@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 from agent.llm.client.llm_client import LlmClient, LlmRequest
-from agent.llm.prompt_util import add_section
+from agent.llm.prompt_util import add_section, extract_json_payload
 from agent.llm.step_designer.step_designer_model import LlmStepExecutionDraft
 
 
@@ -60,7 +60,7 @@ class LlmStepDesigner:
             endpoint_id: str,
             test_case: dict[str, Any],
             current_step: dict[str, Any],
-            contractContext: dict[str, Any],
+            contract_context: dict[str, Any],
             available_context: dict[str, Any] | None = None,
             output_context_plan: list[dict[str, Any]] | None = None,
             prior_step_summary: list[str] | None = None,
@@ -74,7 +74,7 @@ class LlmStepDesigner:
                 endpoint_id=endpoint_id,
                 test_case=test_case,
                 current_step=current_step,
-                contract=contractContext,
+                contract=contract_context,
                 available_context=available_context or {},
                 output_context_plan=output_context_plan or [],
                 prior_step_summary=prior_step_summary or [],
@@ -92,14 +92,14 @@ class LlmStepDesigner:
             f"step={current_step['stepName']} | "
         )
         response = await self._llm_client.generate(request)
-        raw_json = self._extract_json_payload(response.text)
+        raw_json = extract_json_payload(response.text)
         draft = LlmStepExecutionDraft.model_validate_json(raw_json)
 
         self._post_validate_draft(
             endpoint_id=endpoint_id,
             draft=draft,
             current_step=current_step,
-            contract=contractContext,
+            contract=contract_context,
             available_context=available_context or {},
             output_context_plan=output_context_plan or [],
         )
@@ -275,11 +275,6 @@ class LlmStepDesigner:
             "- If isLastSetupBeforeTarget is true, prepare the state as close as needed to the boundary but do not cross it.",
             '- If no stable exact response field is available, return "fieldAssertions": [].',
         ])
-
-        if "deposit" in str(contract.get("path", "")):
-            parts.append(
-                '- For deposit-like requests: if body contains "amount" and no exact amount is required by context or test summary or Test case summary , use a fixed safe amount 1000.00.'
-            )
 
         if consumes_context:
             parts.append(
@@ -542,13 +537,3 @@ class LlmStepDesigner:
             return json.dumps(value, ensure_ascii=False, indent=2)
         return str(value)
 
-    @staticmethod
-    def _extract_json_payload(text: str) -> str:
-        stripped = text.strip()
-
-        if stripped.startswith("```"):
-            match = re.search(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
-            if match:
-                return match.group(1).strip()
-
-        return stripped

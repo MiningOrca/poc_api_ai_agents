@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import json
-import re
 from typing import Any
 
 from agent.llm.client.llm_client import LlmClient, LlmRequest
+from agent.llm.prompt_util import extract_json_payload
 from agent.llm.result_reviewver.result_review_model import ExecutionAuditItem
 from agent.runner.test_runner import StepRunResult, ScenarioRunResult
 
@@ -46,7 +46,7 @@ class LlmExecutionAuditor:
         )
 
         response = await self._llm_client.generate(request)
-        raw_json = self._extract_json_payload(response.text)
+        raw_json = extract_json_payload(response.text)
         return ExecutionAuditItem.model_validate_json(raw_json)
 
     def _project_scenario(self, scenario: ScenarioRunResult) -> dict[str, Any]:
@@ -222,11 +222,3 @@ class LlmExecutionAuditor:
     """.strip()
 
 
-    @staticmethod
-    def _extract_json_payload(text: str) -> str:
-        stripped = text.strip()
-        if stripped.startswith("```"):
-            match = re.search(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
-            if match:
-                return match.group(1).strip()
-        return stripped

@@ -94,7 +94,7 @@ class LlmScenarioBuilder:
                 endpoint_id=step_request["endpointId"],
                 test_case=step_request["testCase"],
                 current_step=step_request["currentStep"],
-                contractContext=step_request["contractContext"],
+                contract_context=step_request["contractContext"],
                 available_context=step_request["availableContext"],
                 output_context_plan=step_request["outputContextPlan"],
                 prior_step_summary=step_request["priorStepSummary"],
