@@ -1,0 +1,175 @@
+{
+  "endpointId": "create_user_users_post",
+  "cases": [
+    {
+      "title": "Create user with valid name and email",
+      "summary": "A POST /users with valid name and email returns HTTP 201 with the created user.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 201,
+      "expectedOutcome": "User is created and response contains userId, name, and email.",
+      "sourceRefs": [
+        "ER-CU-001",
+        "ER-CU-002",
+        "ER-CU-003",
+        "ER-CU-004",
+        "ER-CU-006",
+        "GR-001"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user with a valid name and a valid email address."
+        }
+      ]
+    },
+    {
+      "title": "Create user with name at minimum length boundary (1 character)",
+      "summary": "A name of exactly 1 character satisfies the minimum length constraint and produces HTTP 201.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 201,
+      "expectedOutcome": "User is created successfully.",
+      "sourceRefs": [
+        "ER-CU-002",
+        "ER-CU-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user with a 1-character name."
+        }
+      ]
+    },
+    {
+      "title": "Create user with name at maximum length boundary (100 characters)",
+      "summary": "A name of exactly 100 characters satisfies the maximum length constraint and produces HTTP 201.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 201,
+      "expectedOutcome": "User is created successfully.",
+      "sourceRefs": [
+        "ER-CU-002",
+        "ER-CU-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user with a 100-character name."
+        }
+      ]
+    },
+    {
+      "title": "Reject user creation when name is missing",
+      "summary": "Omitting the required name field returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the name field is required.",
+      "sourceRefs": [
+        "ER-CU-001",
+        "ER-CU-007"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Send a create-user request with the name field omitted."
+        }
+      ]
+    },
+    {
+      "title": "Reject user creation when name is empty string",
+      "summary": "A name of zero characters violates the minimum length constraint and returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the name length is invalid.",
+      "sourceRefs": [
+        "ER-CU-002",
+        "ER-CU-007"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Send a create-user request with an empty string for name."
+        }
+      ]
+    },
+    {
+      "title": "Reject user creation when name exceeds 100 characters",
+      "summary": "A name longer than 100 characters violates the maximum length constraint and returns HTTP 400.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the name length is invalid.",
+      "sourceRefs": [
+        "ER-CU-002",
+        "ER-CU-007"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Send a create-user request with a 101-character name."
+        }
+      ]
+    },
+    {
+      "title": "Reject user creation when email is missing",
+      "summary": "Omitting the required email field returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the email field is required.",
+      "sourceRefs": [
+        "ER-CU-003",
+        "ER-CU-007"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Send a create-user request with the email field omitted."
+        }
+      ]
+    },
+    {
+      "title": "Reject user creation when email format is invalid",
+      "summary": "An email that does not conform to the email format returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the email format is invalid.",
+      "sourceRefs": [
+        "ER-CU-004",
+        "ER-CU-007"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Send a create-user request with a malformed email (e.g., missing @ symbol)."
+        }
+      ]
+    },
+    {
+      "title": "Reject user creation with duplicate email",
+      "summary": "Submitting the same email address as an existing user returns HTTP 409.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 409,
+      "expectedOutcome": "Request is rejected with a conflict error indicating the email is already registered.",
+      "sourceRefs": [
+        "ER-CU-005",
+        "ER-CU-008"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user with a unique email to establish the duplicate."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Attempt to create another user using the same email address."
+        }
+      ]
+    }
+  ]
+}

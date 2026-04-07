@@ -1,0 +1,326 @@
+[
+  {
+    "scenarioId": "SC-DEP-SETUP",
+    "isSetupFixture": true,
+    "endpointId": "create_user_users_post",
+    "title": "Shared setup: create user to obtain valid userId",
+    "category": "setup",
+    "sourceRefs": [],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "DepositUser",
+          "email": "deposit-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "userId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-001",
+    "setupRef": "SC-DEP-SETUP",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Deposit valid amount to existing user wallet",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-DEP-001",
+      "ER-DEP-002",
+      "ER-DEP-003",
+      "ER-DEP-004",
+      "ER-DEP-005",
+      "GR-001",
+      "GR-002"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Deposit valid positive EUR amount",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": 100.5,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-002",
+    "setupRef": "SC-DEP-SETUP",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Deposit amount with exactly two decimal places",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-DEP-002",
+      "ER-DEP-003",
+      "ER-DEP-005"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Deposit amount with exactly two decimal places",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": 10.99,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-003",
+    "setupRef": "SC-DEP-SETUP",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Reject deposit with amount of zero",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-DEP-002",
+      "ER-DEP-006"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt deposit with amount 0",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": 0,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-004",
+    "setupRef": "SC-DEP-SETUP",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Reject deposit with negative amount",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-DEP-002",
+      "ER-DEP-006",
+      "GR-003"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt deposit with negative amount",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": -50,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-005",
+    "setupRef": "SC-DEP-SETUP",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Reject deposit with more than two decimal places",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-DEP-003",
+      "ER-DEP-006"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt deposit with three decimal places",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": 10.001,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-006",
+    "setupRef": "SC-DEP-SETUP",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Reject deposit with unsupported currency",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-DEP-004",
+      "ER-DEP-006",
+      "GR-002"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt deposit with USD currency",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": 50,
+          "currency": "USD"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-007",
+    "endpointId": "deposit_wallets_deposit_post",
+    "title": "Reject deposit for non-existent user",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-DEP-001",
+      "ER-DEP-007"
+    ],
+    "expectedStatusCode": 404,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt deposit for unknown userId",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "nonexistent-{{runId}}",
+          "amount": 100,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  }
+]

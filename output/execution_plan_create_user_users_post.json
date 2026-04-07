@@ -1,0 +1,371 @@
+[
+  {
+    "scenarioId": "SC-CUP-001",
+    "endpointId": "create_user_users_post",
+    "title": "Create user with valid name and email",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-CU-001",
+      "ER-CU-002",
+      "ER-CU-003",
+      "ER-CU-004",
+      "ER-CU-006",
+      "GR-001"
+    ],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Create a user with a valid name and a valid email address",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Alice",
+          "email": "alice-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.name",
+            "operator": "equals",
+            "expected": "Alice"
+          },
+          {
+            "path": "$.email",
+            "operator": "equals",
+            "expected": "alice-{{runId}}@example.com"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-002",
+    "endpointId": "create_user_users_post",
+    "title": "Create user with name at minimum length boundary (1 character)",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-006"
+    ],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Create a user with a 1-character name",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "A",
+          "email": "min-name-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.name",
+            "operator": "equals",
+            "expected": "A"
+          },
+          {
+            "path": "$.email",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-003",
+    "endpointId": "create_user_users_post",
+    "title": "Create user with name at maximum length boundary (100 characters)",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-006"
+    ],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Create a user with a 100-character name",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "email": "max-name-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.name",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.email",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-004",
+    "endpointId": "create_user_users_post",
+    "title": "Reject user creation when name is missing",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-001",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Send a create-user request with the name field omitted",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "email": "no-name-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-005",
+    "endpointId": "create_user_users_post",
+    "title": "Reject user creation when name is empty string",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Send a create-user request with an empty string for name",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "",
+          "email": "empty-name-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-006",
+    "endpointId": "create_user_users_post",
+    "title": "Reject user creation when name exceeds 100 characters",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Send a create-user request with a 101-character name",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "email": "long-name-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-007",
+    "endpointId": "create_user_users_post",
+    "title": "Reject user creation when email is missing",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-003",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Send a create-user request with the email field omitted",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Bob"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-008",
+    "endpointId": "create_user_users_post",
+    "title": "Reject user creation when email format is invalid",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-004",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Send a create-user request with a malformed email (missing @ symbol)",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Charlie",
+          "email": "not-an-email"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-009",
+    "endpointId": "create_user_users_post",
+    "title": "Reject user creation with duplicate email",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-005",
+      "ER-CU-008"
+    ],
+    "expectedStatusCode": 409,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create a user with a unique email to establish the duplicate",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Dave",
+          "email": "dup-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 1,
+        "stepRole": "target",
+        "title": "Attempt to create another user using the same email address",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Eve",
+          "email": "dup-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  }
+]

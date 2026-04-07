@@ -1,0 +1,462 @@
+[
+  {
+    "scenarioId": "SC-GTX-SETUP",
+    "isSetupFixture": true,
+    "endpointId": "create_user_users_post",
+    "title": "Shared setup: create user",
+    "category": "setup",
+    "sourceRefs": [],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Test User",
+          "email": "user-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "userId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-SETUP-DEP",
+    "isSetupFixture": true,
+    "endpointId": "create_user_users_post",
+    "title": "Shared setup: create user and deposit",
+    "category": "setup",
+    "sourceRefs": [],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Test User",
+          "email": "user-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "userId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Deposit funds to create a transaction",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{userId}}",
+          "amount": 50.0,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-001",
+    "setupRef": "SC-GTX-SETUP-DEP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Retrieve transaction history for existing user with default pagination",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-GTX-001",
+      "ER-GTX-002",
+      "ER-GTX-003",
+      "ER-GTX-004",
+      "GR-001"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Retrieve transaction history without specifying limit or offset",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {},
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-002",
+    "setupRef": "SC-GTX-SETUP-DEP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Retrieve transaction history with explicit valid limit and offset",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-003",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Retrieve transactions with limit=10 and offset=0",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {
+          "limit": 10,
+          "offset": 0
+        },
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-003",
+    "setupRef": "SC-GTX-SETUP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Retrieve transaction history with limit at maximum boundary (100)",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Retrieve transactions with limit=100",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {
+          "limit": 100
+        },
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-004",
+    "setupRef": "SC-GTX-SETUP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Retrieve transaction history for user with no transactions",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-GTX-001",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Retrieve transaction history for user with no transactions",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {},
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-005",
+    "setupRef": "SC-GTX-SETUP-DEP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Retrieve transaction history with offset beyond available records",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-GTX-003",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Retrieve transactions with offset=1000, exceeding the number of records",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {
+          "offset": 1000
+        },
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-006",
+    "setupRef": "SC-GTX-SETUP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Reject transaction history request with limit exceeding maximum (101)",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-005"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt to retrieve transactions with limit=101",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {
+          "limit": 101
+        },
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-007",
+    "setupRef": "SC-GTX-SETUP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Reject transaction history request with negative limit",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-005"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt to retrieve transactions with limit=-1",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {
+          "limit": -1
+        },
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-008",
+    "setupRef": "SC-GTX-SETUP",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Reject transaction history request with negative offset",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-GTX-003",
+      "ER-GTX-005"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt to retrieve transactions with offset=-1",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "{{userId}}"
+        },
+        "queryParams": {
+          "offset": -1
+        },
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-009",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "title": "Reject transaction history request for non-existent user",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-GTX-001",
+      "ER-GTX-006"
+    ],
+    "expectedStatusCode": 404,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt to retrieve transaction history for a non-existent userId",
+        "endpointId": "get_transactions_wallets__userId__transactions_get",
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "pathParams": {
+          "userId": "nonexistent-{{runId}}"
+        },
+        "queryParams": {},
+        "body": {},
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  }
+]

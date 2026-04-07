@@ -1,0 +1,850 @@
+[
+  {
+    "scenarioId": "SC-GTX-001",
+    "title": "Retrieve transaction history for existing user with default pagination",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-GTX-001",
+      "ER-GTX-002",
+      "ER-GTX-003",
+      "ER-GTX-004",
+      "GR-001"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-b13d76df@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1177",
+          "name": "Test User",
+          "email": "user-b13d76df@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Deposit funds to create a transaction",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1177",
+          "amount": 50.0,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1177",
+          "newBalance": 50.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 2,
+        "title": "Retrieve transaction history without specifying limit or offset",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1177",
+          "transactions": [
+            {
+              "operationId": "dep-7055",
+              "type": "DEPOSIT",
+              "amount": 50.0,
+              "currency": "EUR",
+              "timestamp": "2026-03-24T10:01:48Z",
+              "counterpartyId": null,
+              "comment": null
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-002",
+    "title": "Retrieve transaction history with explicit valid limit and offset",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-003",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-aaabedb4@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1178",
+          "name": "Test User",
+          "email": "user-aaabedb4@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Deposit funds to create a transaction",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1178",
+          "amount": 50.0,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1178",
+          "newBalance": 50.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 2,
+        "title": "Retrieve transactions with limit=10 and offset=0",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1178",
+          "transactions": [
+            {
+              "operationId": "dep-7056",
+              "type": "DEPOSIT",
+              "amount": 50.0,
+              "currency": "EUR",
+              "timestamp": "2026-03-24T10:01:49Z",
+              "counterpartyId": null,
+              "comment": null
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-003",
+    "title": "Retrieve transaction history with limit at maximum boundary (100)",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-6ff9fde9@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1179",
+          "name": "Test User",
+          "email": "user-6ff9fde9@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Retrieve transactions with limit=100",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1179",
+          "transactions": []
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-004",
+    "title": "Retrieve transaction history for user with no transactions",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-GTX-001",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-cd71be1b@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1180",
+          "name": "Test User",
+          "email": "user-cd71be1b@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Retrieve transaction history for user with no transactions",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1180",
+          "transactions": []
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-005",
+    "title": "Retrieve transaction history with offset beyond available records",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-GTX-003",
+      "ER-GTX-004"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-3e07df53@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1181",
+          "name": "Test User",
+          "email": "user-3e07df53@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Deposit funds to create a transaction",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1181",
+          "amount": 50.0,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1181",
+          "newBalance": 50.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 2,
+        "title": "Retrieve transactions with offset=1000, exceeding the number of records",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.transactions",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1181",
+          "transactions": []
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-006",
+    "title": "Reject transaction history request with limit exceeding maximum (101)",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-005"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-c1b17f8a@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1182",
+          "name": "Test User",
+          "email": "user-c1b17f8a@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt to retrieve transactions with limit=101",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "limit must be <= 100",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-007",
+    "title": "Reject transaction history request with negative limit",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-GTX-002",
+      "ER-GTX-005"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-3436c12f@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1183",
+          "name": "Test User",
+          "email": "user-3436c12f@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt to retrieve transactions with limit=-1",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "limit must be >= 0",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-008",
+    "title": "Reject transaction history request with negative offset",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-GTX-003",
+      "ER-GTX-005"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Test User",
+          "email": "user-5b7a7eeb@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1184",
+          "name": "Test User",
+          "email": "user-5b7a7eeb@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt to retrieve transactions with offset=-1",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "offset must be >= 0",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-GTX-009",
+    "title": "Reject transaction history request for non-existent user",
+    "endpointId": "get_transactions_wallets__userId__transactions_get",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-GTX-001",
+      "ER-GTX-006"
+    ],
+    "expectedStatusCode": 404,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:14Z",
+    "finishedAtUtc": "2026-04-07T08:54:14Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Attempt to retrieve transaction history for a non-existent userId",
+        "stepRole": "target",
+        "passed": true,
+        "method": "GET",
+        "path": "/wallets/{userId}/transactions",
+        "requestBody": {},
+        "expectedStatusCode": 404,
+        "actualStatusCode": 404,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "User not found: nonexistent-677507be",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:14Z",
+        "finishedAtUtc": "2026-04-07T08:54:14Z"
+      }
+    ]
+  }
+]

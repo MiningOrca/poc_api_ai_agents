@@ -1,0 +1,163 @@
+{
+  "endpointId": "deposit_wallets_deposit_post",
+  "cases": [
+    {
+      "title": "Deposit valid amount to existing user wallet",
+      "summary": "A deposit with a valid userId, positive amount, and EUR currency returns HTTP 200 with the new balance.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Deposit succeeds and response contains updated wallet balance in EUR.",
+      "sourceRefs": [
+        "ER-DEP-001",
+        "ER-DEP-002",
+        "ER-DEP-003",
+        "ER-DEP-004",
+        "ER-DEP-005",
+        "GR-001",
+        "GR-002"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Deposit a valid positive EUR amount to that user's wallet."
+        }
+      ]
+    },
+    {
+      "title": "Deposit amount with exactly two decimal places",
+      "summary": "An amount with precisely two decimal places is accepted and returns HTTP 200.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Deposit succeeds with the exact two-decimal amount applied to the balance.",
+      "sourceRefs": [
+        "ER-DEP-002",
+        "ER-DEP-003",
+        "ER-DEP-005"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Deposit an amount with exactly two decimal places (e.g., 10.99)."
+        }
+      ]
+    },
+    {
+      "title": "Reject deposit with amount of zero",
+      "summary": "An amount equal to zero violates the greater-than-zero constraint and returns HTTP 400.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the amount must be greater than 0.",
+      "sourceRefs": [
+        "ER-DEP-002",
+        "ER-DEP-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Attempt a deposit with amount set to 0."
+        }
+      ]
+    },
+    {
+      "title": "Reject deposit with negative amount",
+      "summary": "A negative amount is invalid and returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the amount must be greater than 0.",
+      "sourceRefs": [
+        "ER-DEP-002",
+        "ER-DEP-006",
+        "GR-003"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Attempt a deposit with a negative amount."
+        }
+      ]
+    },
+    {
+      "title": "Reject deposit with more than two decimal places",
+      "summary": "An amount with more than two decimal places violates the precision constraint and returns HTTP 400.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating invalid amount format.",
+      "sourceRefs": [
+        "ER-DEP-003",
+        "ER-DEP-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Attempt a deposit with an amount that has three or more decimal places (e.g., 10.001)."
+        }
+      ]
+    },
+    {
+      "title": "Reject deposit with unsupported currency",
+      "summary": "Providing a currency other than EUR returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating only EUR is supported.",
+      "sourceRefs": [
+        "ER-DEP-004",
+        "ER-DEP-006",
+        "GR-002"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Attempt a deposit with a currency value other than EUR (e.g., USD)."
+        }
+      ]
+    },
+    {
+      "title": "Reject deposit for non-existent user",
+      "summary": "A deposit referencing a userId that does not exist returns HTTP 404.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "expectedOutcome": "Request is rejected with an error indicating the user was not found.",
+      "sourceRefs": [
+        "ER-DEP-001",
+        "ER-DEP-007"
+      ],
+      "steps": [
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Attempt a deposit using a userId that has not been created."
+        }
+      ]
+    }
+  ]
+}

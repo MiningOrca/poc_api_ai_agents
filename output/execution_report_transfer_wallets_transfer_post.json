@@ -1,0 +1,2588 @@
+[
+  {
+    "scenarioId": "SC-TRF-001",
+    "title": "Transfer valid amount between two existing users",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-TRF-001",
+      "ER-TRF-002",
+      "ER-TRF-004",
+      "ER-TRF-005",
+      "ER-TRF-009",
+      "GR-001",
+      "GR-002"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 5aacaa10",
+          "email": "sender-5aacaa10@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1148",
+          "name": "Sender 5aacaa10",
+          "email": "sender-5aacaa10@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 5aacaa10",
+          "email": "receiver-5aacaa10@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1149",
+          "name": "Receiver 5aacaa10",
+          "email": "receiver-5aacaa10@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with 500 EUR",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1148",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "gte",
+            "expected": 500,
+            "actual": 500.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1148",
+          "newBalance": 500.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Transfer a valid EUR amount from sender to receiver",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1148",
+          "receiverId": "u-1149",
+          "amount": 100,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.senderId",
+            "operator": "equals",
+            "expected": "u-1148",
+            "actual": "u-1148",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.receiverId",
+            "operator": "equals",
+            "expected": "u-1149",
+            "actual": "u-1149",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.amount",
+            "operator": "equals",
+            "expected": 100,
+            "actual": 100.0,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9040",
+          "status": "SUCCESS",
+          "senderId": "u-1148",
+          "receiverId": "u-1149",
+          "amount": 100.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-002",
+    "title": "Transfer amount with exactly two decimal places",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-004",
+      "ER-TRF-005",
+      "ER-TRF-009"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 82c8c1f3",
+          "email": "sender-82c8c1f3@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1150",
+          "name": "Sender 82c8c1f3",
+          "email": "sender-82c8c1f3@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 82c8c1f3",
+          "email": "receiver-82c8c1f3@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1151",
+          "name": "Receiver 82c8c1f3",
+          "email": "receiver-82c8c1f3@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with 500 EUR",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1150",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "gte",
+            "expected": 500,
+            "actual": 500.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1150",
+          "newBalance": 500.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Transfer an amount with exactly two decimal places (50.99 EUR)",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1150",
+          "receiverId": "u-1151",
+          "amount": 50.99,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.amount",
+            "operator": "equals",
+            "expected": 50.99,
+            "actual": 50.99,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9041",
+          "status": "SUCCESS",
+          "senderId": "u-1150",
+          "receiverId": "u-1151",
+          "amount": 50.99,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-003",
+    "title": "Transfer optional comment field",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-TRF-001",
+      "ER-TRF-002",
+      "ER-TRF-009"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 913b7938",
+          "email": "sender-913b7938@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1152",
+          "name": "Sender 913b7938",
+          "email": "sender-913b7938@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 913b7938",
+          "email": "receiver-913b7938@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1153",
+          "name": "Receiver 913b7938",
+          "email": "receiver-913b7938@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with 500 EUR",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1152",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "gte",
+            "expected": 500,
+            "actual": 500.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1152",
+          "newBalance": 500.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Transfer a valid amount with the comment field populated",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1152",
+          "receiverId": "u-1153",
+          "amount": 75,
+          "currency": "EUR",
+          "comment": "Test payment"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.senderId",
+            "operator": "equals",
+            "expected": "u-1152",
+            "actual": "u-1152",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.receiverId",
+            "operator": "equals",
+            "expected": "u-1153",
+            "actual": "u-1153",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9042",
+          "status": "SUCCESS",
+          "senderId": "u-1152",
+          "receiverId": "u-1153",
+          "amount": 75.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-004",
+    "title": "Reject self-transfer (senderId equals receiverId)",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-003",
+      "ER-TRF-010",
+      "GR-004"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create the user who will be both sender and receiver",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Self 9a81a230",
+          "email": "self-9a81a230@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1154",
+          "name": "Self 9a81a230",
+          "email": "self-9a81a230@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt a transfer with the same userId for both senderId and receiverId",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1154",
+          "receiverId": "u-1154",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "senderId and receiverId must be different",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-005",
+    "title": "Reject transfer with amount of zero",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-004",
+      "ER-TRF-010"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender ecd542a1",
+          "email": "sender-ecd542a1@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1155",
+          "name": "Sender ecd542a1",
+          "email": "sender-ecd542a1@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver ecd542a1",
+          "email": "receiver-ecd542a1@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1156",
+          "name": "Receiver ecd542a1",
+          "email": "receiver-ecd542a1@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Attempt a transfer with amount set to 0",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1155",
+          "receiverId": "u-1156",
+          "amount": 0,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "amount",
+              "message": "Value error, Amount must be greater than 0"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-006",
+    "title": "Reject transfer with negative amount",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-004",
+      "ER-TRF-010"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 4c57ac21",
+          "email": "sender-4c57ac21@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1157",
+          "name": "Sender 4c57ac21",
+          "email": "sender-4c57ac21@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 4c57ac21",
+          "email": "receiver-4c57ac21@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1158",
+          "name": "Receiver 4c57ac21",
+          "email": "receiver-4c57ac21@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Attempt a transfer with a negative amount",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1157",
+          "receiverId": "u-1158",
+          "amount": -50,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "amount",
+              "message": "Value error, Amount must be greater than 0"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-007",
+    "title": "Reject transfer with more than two decimal places",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-005",
+      "ER-TRF-010"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 0e8c6e0f",
+          "email": "sender-0e8c6e0f@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1159",
+          "name": "Sender 0e8c6e0f",
+          "email": "sender-0e8c6e0f@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 0e8c6e0f",
+          "email": "receiver-0e8c6e0f@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1160",
+          "name": "Receiver 0e8c6e0f",
+          "email": "receiver-0e8c6e0f@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Attempt a transfer with an amount that has three decimal places",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1159",
+          "receiverId": "u-1160",
+          "amount": 10.123,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "amount",
+              "message": "Value error, Amount must have at most two decimal places"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-008",
+    "title": "Reject transfer with unsupported currency",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-010",
+      "GR-002"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 8d02c53c",
+          "email": "sender-8d02c53c@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1161",
+          "name": "Sender 8d02c53c",
+          "email": "sender-8d02c53c@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 8d02c53c",
+          "email": "receiver-8d02c53c@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1162",
+          "name": "Receiver 8d02c53c",
+          "email": "receiver-8d02c53c@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Attempt a transfer with currency USD instead of EUR",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1161",
+          "receiverId": "u-1162",
+          "amount": 50,
+          "currency": "USD"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "currency",
+              "message": "Input should be 'EUR'"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-009",
+    "title": "Reject transfer when sender has insufficient funds",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-006",
+      "ER-TRF-011",
+      "GR-003"
+    ],
+    "expectedStatusCode": 402,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender fa6ed6c7",
+          "email": "sender-fa6ed6c7@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1163",
+          "name": "Sender fa6ed6c7",
+          "email": "sender-fa6ed6c7@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver fa6ed6c7",
+          "email": "receiver-fa6ed6c7@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1164",
+          "name": "Receiver fa6ed6c7",
+          "email": "receiver-fa6ed6c7@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Deposit a small amount (10 EUR) to sender's wallet",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1163",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 10,
+            "actual": 10.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1163",
+          "newBalance": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Attempt to transfer an amount exceeding the sender's balance (500 EUR)",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1163",
+          "receiverId": "u-1164",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 402,
+        "actualStatusCode": 402,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Insufficient funds",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-010",
+    "title": "Reject transfer when sender has zero balance",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-006",
+      "ER-TRF-011",
+      "GR-003"
+    ],
+    "expectedStatusCode": 402,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 3e7da022",
+          "email": "sender-3e7da022@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1165",
+          "name": "Sender 3e7da022",
+          "email": "sender-3e7da022@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 3e7da022",
+          "email": "receiver-3e7da022@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1166",
+          "name": "Receiver 3e7da022",
+          "email": "receiver-3e7da022@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Attempt to transfer any positive amount from a zero-balance sender",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1165",
+          "receiverId": "u-1166",
+          "amount": 1,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 402,
+        "actualStatusCode": 402,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Insufficient funds",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-011",
+    "title": "Reject transfer when sender exceeds daily count limit (6th transfer)",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-007",
+      "ER-TRF-012",
+      "GR-005"
+    ],
+    "expectedStatusCode": 403,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 250b5af7",
+          "email": "sender-250b5af7@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1167",
+          "name": "Sender 250b5af7",
+          "email": "sender-250b5af7@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 250b5af7",
+          "email": "receiver-250b5af7@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1168",
+          "name": "Receiver 250b5af7",
+          "email": "receiver-250b5af7@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with enough balance for multiple transfers (600 EUR)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1167",
+          "amount": 600,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 600,
+            "actual": 600.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1167",
+          "newBalance": 600.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Execute transfer 1 of 5 (within daily count limit)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9043",
+          "status": "SUCCESS",
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 4,
+        "title": "Execute transfer 2 of 5 (within daily count limit)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9044",
+          "status": "SUCCESS",
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 5,
+        "title": "Execute transfer 3 of 5 (within daily count limit)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9045",
+          "status": "SUCCESS",
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 6,
+        "title": "Execute transfer 4 of 5 (within daily count limit)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9046",
+          "status": "SUCCESS",
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 7,
+        "title": "Execute transfer 5 of 5 (at daily count limit boundary)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9047",
+          "status": "SUCCESS",
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 8,
+        "title": "Attempt the 6th transfer which exceeds the daily count limit",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1167",
+          "receiverId": "u-1168",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 403,
+        "actualStatusCode": 403,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Daily limit on number of outgoing transfers exceeded",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-012",
+    "title": "Allow exactly 5 transfers in a calendar day (boundary)",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-007",
+      "ER-TRF-009",
+      "GR-005"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender f841cf46",
+          "email": "sender-f841cf46@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1169",
+          "name": "Sender f841cf46",
+          "email": "sender-f841cf46@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver f841cf46",
+          "email": "receiver-f841cf46@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1170",
+          "name": "Receiver f841cf46",
+          "email": "receiver-f841cf46@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with enough balance for five transfers (500 EUR)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1169",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 500,
+            "actual": 500.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1169",
+          "newBalance": 500.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Execute transfer 1 of 5",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9048",
+          "status": "SUCCESS",
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 4,
+        "title": "Execute transfer 2 of 5",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9049",
+          "status": "SUCCESS",
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 5,
+        "title": "Execute transfer 3 of 5",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9050",
+          "status": "SUCCESS",
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 6,
+        "title": "Execute transfer 4 of 5",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9051",
+          "status": "SUCCESS",
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 7,
+        "title": "Execute transfer 5 of 5 — boundary case that must succeed",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9052",
+          "status": "SUCCESS",
+          "senderId": "u-1169",
+          "receiverId": "u-1170",
+          "amount": 10.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-013",
+    "title": "Reject transfer when sender exceeds daily amount limit",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-008",
+      "ER-TRF-013",
+      "GR-006"
+    ],
+    "expectedStatusCode": 429,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:11Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender 8a0b320e",
+          "email": "sender-8a0b320e@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1171",
+          "name": "Sender 8a0b320e",
+          "email": "sender-8a0b320e@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 8a0b320e",
+          "email": "receiver-8a0b320e@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1172",
+          "name": "Receiver 8a0b320e",
+          "email": "receiver-8a0b320e@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with more than 5000 EUR (6000 EUR)",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1171",
+          "amount": 6000,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 6000,
+            "actual": 6000.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1171",
+          "newBalance": 6000.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 3,
+        "title": "Transfer 5000 EUR to reach the exact daily amount limit",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1171",
+          "receiverId": "u-1172",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9053",
+          "status": "SUCCESS",
+          "senderId": "u-1171",
+          "receiverId": "u-1172",
+          "amount": 5000.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 4,
+        "title": "Attempt an additional transfer of 1 EUR which exceeds the daily amount limit",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1171",
+          "receiverId": "u-1172",
+          "amount": 1,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 429,
+        "actualStatusCode": 429,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Daily amount limit exceeded",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-014",
+    "title": "Allow transfer that brings daily total to exactly 5000 EUR (boundary)",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-008",
+      "ER-TRF-009",
+      "GR-006"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:11Z",
+    "finishedAtUtc": "2026-04-07T08:54:12Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender ca8e6bf5",
+          "email": "sender-ca8e6bf5@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1173",
+          "name": "Sender ca8e6bf5",
+          "email": "sender-ca8e6bf5@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:11Z"
+      },
+      {
+        "index": 1,
+        "title": "Create receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver ca8e6bf5",
+          "email": "receiver-ca8e6bf5@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1174",
+          "name": "Receiver ca8e6bf5",
+          "email": "receiver-ca8e6bf5@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:11Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      },
+      {
+        "index": 2,
+        "title": "Fund sender wallet with at least 5000 EUR",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1173",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 5000,
+            "actual": 5000.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1173",
+          "newBalance": 5000.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      },
+      {
+        "index": 3,
+        "title": "Transfer exactly 5000 EUR — boundary case that must succeed",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1173",
+          "receiverId": "u-1174",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS",
+            "actual": "SUCCESS",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.amount",
+            "operator": "equals",
+            "expected": 5000,
+            "actual": 5000.0,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "operationId": "tr-9054",
+          "status": "SUCCESS",
+          "senderId": "u-1173",
+          "receiverId": "u-1174",
+          "amount": 5000.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-015",
+    "title": "Reject transfer when sender does not exist",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-001",
+      "ER-TRF-014"
+    ],
+    "expectedStatusCode": 404,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:12Z",
+    "finishedAtUtc": "2026-04-07T08:54:12Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create the receiver user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Receiver 0701ffe0",
+          "email": "receiver-0701ffe0@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1175",
+          "name": "Receiver 0701ffe0",
+          "email": "receiver-0701ffe0@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt a transfer using a senderId that does not exist",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "nonexistent-sender-0701ffe0",
+          "receiverId": "u-1175",
+          "amount": 50,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 404,
+        "actualStatusCode": 404,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Sender not found: nonexistent-sender-0701ffe0",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-016",
+    "title": "Reject transfer when receiver does not exist",
+    "endpointId": "transfer_wallets_transfer_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-002",
+      "ER-TRF-014"
+    ],
+    "expectedStatusCode": 404,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:12Z",
+    "finishedAtUtc": "2026-04-07T08:54:12Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create sender user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Sender c9de0818",
+          "email": "sender-c9de0818@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1176",
+          "name": "Sender c9de0818",
+          "email": "sender-c9de0818@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      },
+      {
+        "index": 1,
+        "title": "Fund sender wallet",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1176",
+          "amount": 100,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 100,
+            "actual": 100.0,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1176",
+          "newBalance": 100.0,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      },
+      {
+        "index": 2,
+        "title": "Attempt a transfer using a receiverId that does not exist",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "requestBody": {
+          "senderId": "u-1176",
+          "receiverId": "nonexistent-receiver-c9de0818",
+          "amount": 50,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 404,
+        "actualStatusCode": 404,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Receiver not found: nonexistent-receiver-c9de0818",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:12Z",
+        "finishedAtUtc": "2026-04-07T08:54:12Z"
+      }
+    ]
+  }
+]

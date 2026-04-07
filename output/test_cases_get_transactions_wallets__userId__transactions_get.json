@@ -1,0 +1,215 @@
+{
+  "endpointId": "get_transactions_wallets__userId__transactions_get",
+  "cases": [
+    {
+      "title": "Retrieve transaction history for existing user with default pagination",
+      "summary": "A GET request for a valid userId with no explicit limit or offset returns HTTP 200 with the default page of transactions.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Response contains the userId and a list of transactions using the default limit of 20 and offset of 0.",
+      "sourceRefs": [
+        "ER-GTX-001",
+        "ER-GTX-002",
+        "ER-GTX-003",
+        "ER-GTX-004",
+        "GR-001"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user to obtain a valid userId."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Deposit funds to create at least one transaction."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Retrieve transaction history without specifying limit or offset."
+        }
+      ]
+    },
+    {
+      "title": "Retrieve transaction history with explicit valid limit and offset",
+      "summary": "A GET request specifying a valid limit and offset returns HTTP 200 with the correct page of results.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Response contains the requested page of transactions according to the provided limit and offset.",
+      "sourceRefs": [
+        "ER-GTX-002",
+        "ER-GTX-003",
+        "ER-GTX-004"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Deposit funds to generate transactions."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Retrieve transactions with limit=10 and offset=0."
+        }
+      ]
+    },
+    {
+      "title": "Retrieve transaction history with limit at maximum boundary (100)",
+      "summary": "A GET request with limit=100 is at the documented maximum and returns HTTP 200.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Response returns up to 100 transactions without error.",
+      "sourceRefs": [
+        "ER-GTX-002",
+        "ER-GTX-004"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Retrieve transactions with limit=100."
+        }
+      ]
+    },
+    {
+      "title": "Retrieve transaction history for user with no transactions",
+      "summary": "A GET request for a valid userId that has no transactions returns HTTP 200 with an empty list.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Response contains the userId and an empty transactions list.",
+      "sourceRefs": [
+        "ER-GTX-001",
+        "ER-GTX-004"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user without any subsequent deposits or transfers."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Retrieve the transaction history for the user with no transactions."
+        }
+      ]
+    },
+    {
+      "title": "Retrieve transaction history with offset beyond available records",
+      "summary": "A GET request with an offset larger than the total number of transactions returns HTTP 200 with an empty list.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Response contains an empty transactions list; no error is raised.",
+      "sourceRefs": [
+        "ER-GTX-003",
+        "ER-GTX-004"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Deposit to create one transaction."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Retrieve transactions with offset=1000, exceeding the number of records."
+        }
+      ]
+    },
+    {
+      "title": "Reject transaction history request with limit exceeding maximum (101)",
+      "summary": "A GET request with limit=101 exceeds the documented maximum and returns HTTP 400.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the limit parameter is invalid.",
+      "sourceRefs": [
+        "ER-GTX-002",
+        "ER-GTX-005"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Attempt to retrieve transactions with limit=101."
+        }
+      ]
+    },
+    {
+      "title": "Reject transaction history request with negative limit",
+      "summary": "A GET request with a negative limit is invalid and returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the limit parameter is invalid.",
+      "sourceRefs": [
+        "ER-GTX-002",
+        "ER-GTX-005"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Attempt to retrieve transactions with a negative limit value."
+        }
+      ]
+    },
+    {
+      "title": "Reject transaction history request with negative offset",
+      "summary": "A GET request with a negative offset is invalid and returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the offset parameter is invalid.",
+      "sourceRefs": [
+        "ER-GTX-003",
+        "ER-GTX-005"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create a user."
+        },
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Attempt to retrieve transactions with a negative offset value."
+        }
+      ]
+    },
+    {
+      "title": "Reject transaction history request for non-existent user",
+      "summary": "A GET request for a userId that does not exist returns HTTP 404.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "expectedOutcome": "Request is rejected with an error indicating the user was not found.",
+      "sourceRefs": [
+        "ER-GTX-001",
+        "ER-GTX-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "get_transactions_wallets__userId__transactions_get",
+          "summary": "Attempt to retrieve transaction history for a userId that has not been created."
+        }
+      ]
+    }
+  ]
+}

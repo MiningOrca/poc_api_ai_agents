@@ -1,0 +1,599 @@
+[
+  {
+    "scenarioId": "SC-DEP-001",
+    "title": "Deposit valid amount to existing user wallet",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-DEP-001",
+      "ER-DEP-002",
+      "ER-DEP-003",
+      "ER-DEP-004",
+      "ER-DEP-005",
+      "GR-001",
+      "GR-002"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "DepositUser",
+          "email": "deposit-08a72195@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1142",
+          "name": "DepositUser",
+          "email": "deposit-08a72195@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      },
+      {
+        "index": 1,
+        "title": "Deposit valid positive EUR amount",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1142",
+          "amount": 100.5,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1142",
+          "newBalance": 100.5,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-002",
+    "title": "Deposit amount with exactly two decimal places",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-DEP-002",
+      "ER-DEP-003",
+      "ER-DEP-005"
+    ],
+    "expectedStatusCode": 200,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "DepositUser",
+          "email": "deposit-29feb149@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1143",
+          "name": "DepositUser",
+          "email": "deposit-29feb149@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      },
+      {
+        "index": 1,
+        "title": "Deposit amount with exactly two decimal places",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1143",
+          "amount": 10.99,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 200,
+        "actualStatusCode": 200,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.newBalance",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR",
+            "actual": "EUR",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1143",
+          "newBalance": 10.99,
+          "currency": "EUR"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-003",
+    "title": "Reject deposit with amount of zero",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-DEP-002",
+      "ER-DEP-006"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "DepositUser",
+          "email": "deposit-247b8bcf@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1144",
+          "name": "DepositUser",
+          "email": "deposit-247b8bcf@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt deposit with amount 0",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1144",
+          "amount": 0,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "amount",
+              "message": "Value error, Amount must be greater than 0"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-004",
+    "title": "Reject deposit with negative amount",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-DEP-002",
+      "ER-DEP-006",
+      "GR-003"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "DepositUser",
+          "email": "deposit-bce179a7@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1145",
+          "name": "DepositUser",
+          "email": "deposit-bce179a7@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt deposit with negative amount",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1145",
+          "amount": -50,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "amount",
+              "message": "Value error, Amount must be greater than 0"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-005",
+    "title": "Reject deposit with more than two decimal places",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-DEP-003",
+      "ER-DEP-006"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "DepositUser",
+          "email": "deposit-96c5da74@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1146",
+          "name": "DepositUser",
+          "email": "deposit-96c5da74@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt deposit with three decimal places",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1146",
+          "amount": 10.001,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "amount",
+              "message": "Value error, Amount must have at most two decimal places"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-006",
+    "title": "Reject deposit with unsupported currency",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-DEP-004",
+      "ER-DEP-006",
+      "GR-002"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create user",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "DepositUser",
+          "email": "deposit-f19330aa@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1147",
+          "name": "DepositUser",
+          "email": "deposit-f19330aa@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt deposit with USD currency",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "u-1147",
+          "amount": 50,
+          "currency": "USD"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "currency",
+              "message": "Input should be 'EUR'"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-DEP-007",
+    "title": "Reject deposit for non-existent user",
+    "endpointId": "deposit_wallets_deposit_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-DEP-001",
+      "ER-DEP-007"
+    ],
+    "expectedStatusCode": 404,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:09Z",
+    "finishedAtUtc": "2026-04-07T08:54:09Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Attempt deposit for unknown userId",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "requestBody": {
+          "userId": "nonexistent-98fc0466",
+          "amount": 100,
+          "currency": "EUR"
+        },
+        "expectedStatusCode": 404,
+        "actualStatusCode": 404,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "User not found: nonexistent-98fc0466",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:09Z",
+        "finishedAtUtc": "2026-04-07T08:54:09Z"
+      }
+    ]
+  }
+]

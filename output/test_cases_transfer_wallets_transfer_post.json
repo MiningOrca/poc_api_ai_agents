@@ -1,0 +1,499 @@
+{
+  "endpointId": "transfer_wallets_transfer_post",
+  "cases": [
+    {
+      "title": "Transfer valid amount between two existing users",
+      "summary": "A transfer with valid sender, receiver, positive EUR amount returns HTTP 200.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Transfer succeeds and response contains operationId, status SUCCESS, sender/receiver IDs, amount, and currency.",
+      "sourceRefs": [
+        "ER-TRF-001",
+        "ER-TRF-002",
+        "ER-TRF-004",
+        "ER-TRF-005",
+        "ER-TRF-009",
+        "GR-001",
+        "GR-002"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet with sufficient balance."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Transfer a valid EUR amount from sender to receiver."
+        }
+      ]
+    },
+    {
+      "title": "Transfer amount with exactly two decimal places",
+      "summary": "An amount with precisely two decimal places satisfies the precision constraint and returns HTTP 200.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Transfer succeeds with the exact two-decimal amount.",
+      "sourceRefs": [
+        "ER-TRF-004",
+        "ER-TRF-005",
+        "ER-TRF-009"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Transfer an amount with exactly two decimal places (e.g., 50.99)."
+        }
+      ]
+    },
+    {
+      "title": "Transfer optional comment field",
+      "summary": "A transfer that includes the optional comment field is accepted and returns HTTP 200.",
+      "category": "positive",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Transfer succeeds; comment is accepted without error.",
+      "sourceRefs": [
+        "ER-TRF-001",
+        "ER-TRF-002",
+        "ER-TRF-009"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Transfer a valid amount with the comment field populated."
+        }
+      ]
+    },
+    {
+      "title": "Reject self-transfer (senderId equals receiverId)",
+      "summary": "A transfer where senderId and receiverId are identical returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating self-transfer is not allowed.",
+      "sourceRefs": [
+        "ER-TRF-003",
+        "ER-TRF-010",
+        "GR-004"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the user who will be both sender and receiver."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer with the same userId for both senderId and receiverId."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer with amount of zero",
+      "summary": "An amount equal to zero violates the greater-than-zero constraint and returns HTTP 400.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the amount must be greater than 0.",
+      "sourceRefs": [
+        "ER-TRF-004",
+        "ER-TRF-010"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer with amount set to 0."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer with negative amount",
+      "summary": "A negative transfer amount is invalid and returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating the amount must be greater than 0.",
+      "sourceRefs": [
+        "ER-TRF-004",
+        "ER-TRF-010"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer with a negative amount."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer with more than two decimal places",
+      "summary": "An amount with more than two decimal places violates the precision constraint and returns HTTP 400.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating invalid amount format.",
+      "sourceRefs": [
+        "ER-TRF-005",
+        "ER-TRF-010"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer with an amount that has three or more decimal places."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer with unsupported currency",
+      "summary": "A currency other than EUR is rejected and returns HTTP 400.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 400,
+      "expectedOutcome": "Request is rejected with an error indicating only EUR is supported.",
+      "sourceRefs": [
+        "ER-TRF-010",
+        "GR-002"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer with a currency other than EUR (e.g., USD)."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer when sender has insufficient funds",
+      "summary": "A transfer exceeding the sender's current balance returns HTTP 402.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 402,
+      "expectedOutcome": "Request is rejected with an error indicating insufficient funds.",
+      "sourceRefs": [
+        "ER-TRF-006",
+        "ER-TRF-011",
+        "GR-003"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Deposit a small amount to the sender's wallet."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt to transfer an amount exceeding the sender's balance."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer when sender has zero balance",
+      "summary": "A transfer from a sender with no funds at all returns HTTP 402.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 402,
+      "expectedOutcome": "Request is rejected with an error indicating insufficient funds.",
+      "sourceRefs": [
+        "ER-TRF-006",
+        "ER-TRF-011",
+        "GR-003"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user with no initial deposit."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt to transfer any positive amount from the zero-balance sender."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer when sender exceeds daily count limit (6th transfer)",
+      "summary": "The 6th outgoing transfer in a calendar day from a single sender returns HTTP 403.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 403,
+      "expectedOutcome": "Request is rejected with an error indicating the daily transfer count limit has been exceeded.",
+      "sourceRefs": [
+        "ER-TRF-007",
+        "ER-TRF-012",
+        "GR-005"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet with enough balance for multiple transfers."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 1 of 5 (within daily count limit)."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 2 of 5 (within daily count limit)."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 3 of 5 (within daily count limit)."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 4 of 5 (within daily count limit)."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 5 of 5 (at daily count limit boundary)."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt the 6th transfer which exceeds the daily count limit."
+        }
+      ]
+    },
+    {
+      "title": "Allow exactly 5 transfers in a calendar day (boundary)",
+      "summary": "The 5th outgoing transfer in a calendar day from a single sender succeeds with HTTP 200.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Transfer succeeds, confirming 5 is the inclusive maximum for the daily count limit.",
+      "sourceRefs": [
+        "ER-TRF-007",
+        "ER-TRF-009",
+        "GR-005"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet with enough balance for five transfers."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 1 of 5."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 2 of 5."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 3 of 5."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 4 of 5."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Execute transfer 5 of 5 \u2014 this is the boundary case that must succeed."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer when sender exceeds daily amount limit",
+      "summary": "A transfer that would push the sender's total daily outgoing beyond 5,000 EUR returns HTTP 429.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 429,
+      "expectedOutcome": "Request is rejected with an error indicating the daily amount limit has been exceeded.",
+      "sourceRefs": [
+        "ER-TRF-008",
+        "ER-TRF-013",
+        "GR-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet with more than 5,000 EUR."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Transfer 5,000 EUR to reach the exact daily amount limit."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt an additional transfer of any positive amount, which exceeds the daily limit."
+        }
+      ]
+    },
+    {
+      "title": "Allow transfer that brings daily total to exactly 5,000 EUR (boundary)",
+      "summary": "A transfer that brings the sender's total daily outgoing to exactly 5,000 EUR returns HTTP 200.",
+      "category": "boundary",
+      "mode": "single",
+      "expectedStatusCode": 200,
+      "expectedOutcome": "Transfer succeeds, confirming 5,000 EUR is the inclusive daily amount ceiling.",
+      "sourceRefs": [
+        "ER-TRF-008",
+        "ER-TRF-009",
+        "GR-006"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet with at least 5,000 EUR."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Transfer exactly 5,000 EUR \u2014 this boundary case must succeed."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer when sender does not exist",
+      "summary": "A transfer referencing a non-existent senderId returns HTTP 404.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "expectedOutcome": "Request is rejected with an error indicating the sender was not found.",
+      "sourceRefs": [
+        "ER-TRF-001",
+        "ER-TRF-014"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the receiver user."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer using a senderId that does not exist."
+        }
+      ]
+    },
+    {
+      "title": "Reject transfer when receiver does not exist",
+      "summary": "A transfer referencing a non-existent receiverId returns HTTP 404.",
+      "category": "negative",
+      "mode": "single",
+      "expectedStatusCode": 404,
+      "expectedOutcome": "Request is rejected with an error indicating the receiver was not found.",
+      "sourceRefs": [
+        "ER-TRF-002",
+        "ER-TRF-014"
+      ],
+      "steps": [
+        {
+          "endpointId": "create_user_users_post",
+          "summary": "Create the sender user."
+        },
+        {
+          "endpointId": "deposit_wallets_deposit_post",
+          "summary": "Fund the sender's wallet."
+        },
+        {
+          "endpointId": "transfer_wallets_transfer_post",
+          "summary": "Attempt a transfer using a receiverId that does not exist."
+        }
+      ]
+    }
+  ]
+}

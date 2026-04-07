@@ -1,0 +1,1584 @@
+[
+  {
+    "scenarioId": "SC-TRF-SETUP",
+    "isSetupFixture": true,
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Shared setup: create sender, create receiver, fund sender with 500 EUR",
+    "category": "setup",
+    "sourceRefs": [],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "stepRole": "setup",
+        "title": "Fund sender wallet with 500 EUR",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "gte",
+            "expected": 500
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-SETUP-NOFUNDS",
+    "isSetupFixture": true,
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Shared setup: create sender and receiver with no funds",
+    "category": "setup",
+    "sourceRefs": [],
+    "expectedStatusCode": 201,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-001",
+    "setupRef": "SC-TRF-SETUP",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Transfer valid amount between two existing users",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-TRF-001",
+      "ER-TRF-002",
+      "ER-TRF-004",
+      "ER-TRF-005",
+      "ER-TRF-009",
+      "GR-001",
+      "GR-002"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Transfer a valid EUR amount from sender to receiver",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 100,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          },
+          {
+            "path": "$.senderId",
+            "operator": "equals",
+            "expected": "{{senderId}}"
+          },
+          {
+            "path": "$.receiverId",
+            "operator": "equals",
+            "expected": "{{receiverId}}"
+          },
+          {
+            "path": "$.amount",
+            "operator": "equals",
+            "expected": 100
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-002",
+    "setupRef": "SC-TRF-SETUP",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Transfer amount with exactly two decimal places",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-004",
+      "ER-TRF-005",
+      "ER-TRF-009"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Transfer an amount with exactly two decimal places (50.99 EUR)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 50.99,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          },
+          {
+            "path": "$.amount",
+            "operator": "equals",
+            "expected": 50.99
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-003",
+    "setupRef": "SC-TRF-SETUP",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Transfer optional comment field",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-TRF-001",
+      "ER-TRF-002",
+      "ER-TRF-009"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Transfer a valid amount with the comment field populated",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 75,
+          "currency": "EUR",
+          "comment": "Test payment"
+        },
+        "assertions": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          },
+          {
+            "path": "$.senderId",
+            "operator": "equals",
+            "expected": "{{senderId}}"
+          },
+          {
+            "path": "$.receiverId",
+            "operator": "equals",
+            "expected": "{{receiverId}}"
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-004",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject self-transfer (senderId equals receiverId)",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-003",
+      "ER-TRF-010",
+      "GR-004"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create the user who will be both sender and receiver",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Self {{runId}}",
+          "email": "self-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "selfId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "target",
+        "title": "Attempt a transfer with the same userId for both senderId and receiverId",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{selfId}}",
+          "receiverId": "{{selfId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-005",
+    "setupRef": "SC-TRF-SETUP-NOFUNDS",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer with amount of zero",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-004",
+      "ER-TRF-010"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt a transfer with amount set to 0",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 0,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-006",
+    "setupRef": "SC-TRF-SETUP-NOFUNDS",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer with negative amount",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-004",
+      "ER-TRF-010"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt a transfer with a negative amount",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": -50,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-007",
+    "setupRef": "SC-TRF-SETUP-NOFUNDS",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer with more than two decimal places",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-005",
+      "ER-TRF-010"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt a transfer with an amount that has three decimal places",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10.123,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-008",
+    "setupRef": "SC-TRF-SETUP-NOFUNDS",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer with unsupported currency",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-010",
+      "GR-002"
+    ],
+    "expectedStatusCode": 400,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt a transfer with currency USD instead of EUR",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 50,
+          "currency": "USD"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-009",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer when sender has insufficient funds",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-006",
+      "ER-TRF-011",
+      "GR-003"
+    ],
+    "expectedStatusCode": 402,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "stepRole": "setup",
+        "title": "Deposit a small amount (10 EUR) to sender's wallet",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 10
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 3,
+        "stepRole": "target",
+        "title": "Attempt to transfer an amount exceeding the sender's balance (500 EUR)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-010",
+    "setupRef": "SC-TRF-SETUP-NOFUNDS",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer when sender has zero balance",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-006",
+      "ER-TRF-011",
+      "GR-003"
+    ],
+    "expectedStatusCode": 402,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "target",
+        "title": "Attempt to transfer any positive amount from a zero-balance sender",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 1,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-011",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer when sender exceeds daily count limit (6th transfer)",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-007",
+      "ER-TRF-012",
+      "GR-005"
+    ],
+    "expectedStatusCode": 403,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "stepRole": "setup",
+        "title": "Fund sender wallet with enough balance for multiple transfers (600 EUR)",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 600,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 600
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 3,
+        "stepRole": "setup",
+        "title": "Execute transfer 1 of 5 (within daily count limit)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 4,
+        "stepRole": "setup",
+        "title": "Execute transfer 2 of 5 (within daily count limit)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 5,
+        "stepRole": "setup",
+        "title": "Execute transfer 3 of 5 (within daily count limit)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 6,
+        "stepRole": "setup",
+        "title": "Execute transfer 4 of 5 (within daily count limit)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 7,
+        "stepRole": "setup",
+        "title": "Execute transfer 5 of 5 (at daily count limit boundary)",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 8,
+        "stepRole": "target",
+        "title": "Attempt the 6th transfer which exceeds the daily count limit",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-012",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Allow exactly 5 transfers in a calendar day (boundary)",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-007",
+      "ER-TRF-009",
+      "GR-005"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "stepRole": "setup",
+        "title": "Fund sender wallet with enough balance for five transfers (500 EUR)",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 500,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 500
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 3,
+        "stepRole": "setup",
+        "title": "Execute transfer 1 of 5",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 4,
+        "stepRole": "setup",
+        "title": "Execute transfer 2 of 5",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 5,
+        "stepRole": "setup",
+        "title": "Execute transfer 3 of 5",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 6,
+        "stepRole": "setup",
+        "title": "Execute transfer 4 of 5",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 7,
+        "stepRole": "target",
+        "title": "Execute transfer 5 of 5 \u2014 boundary case that must succeed",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 10,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-013",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer when sender exceeds daily amount limit",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-008",
+      "ER-TRF-013",
+      "GR-006"
+    ],
+    "expectedStatusCode": 429,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "stepRole": "setup",
+        "title": "Fund sender wallet with more than 5000 EUR (6000 EUR)",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 6000,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 6000
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 3,
+        "stepRole": "setup",
+        "title": "Transfer 5000 EUR to reach the exact daily amount limit",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 4,
+        "stepRole": "target",
+        "title": "Attempt an additional transfer of 1 EUR which exceeds the daily amount limit",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 1,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-014",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Allow transfer that brings daily total to exactly 5000 EUR (boundary)",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-TRF-008",
+      "ER-TRF-009",
+      "GR-006"
+    ],
+    "expectedStatusCode": 200,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Create receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "stepRole": "setup",
+        "title": "Fund sender wallet with at least 5000 EUR",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 5000
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 3,
+        "stepRole": "target",
+        "title": "Transfer exactly 5000 EUR \u2014 boundary case that must succeed",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.operationId",
+            "operator": "exists",
+            "expected": true
+          },
+          {
+            "path": "$.status",
+            "operator": "equals",
+            "expected": "SUCCESS"
+          },
+          {
+            "path": "$.amount",
+            "operator": "equals",
+            "expected": 5000
+          },
+          {
+            "path": "$.currency",
+            "operator": "equals",
+            "expected": "EUR"
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-015",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer when sender does not exist",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-001",
+      "ER-TRF-014"
+    ],
+    "expectedStatusCode": 404,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create the receiver user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Receiver {{runId}}",
+          "email": "receiver-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "receiverId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "target",
+        "title": "Attempt a transfer using a senderId that does not exist",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "nonexistent-sender-{{runId}}",
+          "receiverId": "{{receiverId}}",
+          "amount": 50,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-TRF-016",
+    "endpointId": "transfer_wallets_transfer_post",
+    "title": "Reject transfer when receiver does not exist",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-TRF-002",
+      "ER-TRF-014"
+    ],
+    "expectedStatusCode": 404,
+    "steps": [
+      {
+        "index": 0,
+        "stepRole": "setup",
+        "title": "Create sender user",
+        "endpointId": "create_user_users_post",
+        "method": "POST",
+        "path": "/users",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "name": "Sender {{runId}}",
+          "email": "sender-{{runId}}@example.com"
+        },
+        "assertions": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": [
+          {
+            "contextKey": "senderId",
+            "sourcePath": "$.userId"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "stepRole": "setup",
+        "title": "Fund sender wallet",
+        "endpointId": "deposit_wallets_deposit_post",
+        "method": "POST",
+        "path": "/wallets/deposit",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "userId": "{{senderId}}",
+          "amount": 100,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.newBalance",
+            "operator": "equals",
+            "expected": 100
+          }
+        ],
+        "produceBindings": []
+      },
+      {
+        "index": 2,
+        "stepRole": "target",
+        "title": "Attempt a transfer using a receiverId that does not exist",
+        "endpointId": "transfer_wallets_transfer_post",
+        "method": "POST",
+        "path": "/wallets/transfer",
+        "pathParams": {},
+        "queryParams": {},
+        "body": {
+          "senderId": "{{senderId}}",
+          "receiverId": "nonexistent-receiver-{{runId}}",
+          "amount": 50,
+          "currency": "EUR"
+        },
+        "assertions": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true
+          }
+        ],
+        "produceBindings": []
+      }
+    ]
+  }
+]

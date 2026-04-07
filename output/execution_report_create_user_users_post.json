@@ -1,0 +1,544 @@
+[
+  {
+    "scenarioId": "SC-CUP-001",
+    "title": "Create user with valid name and email",
+    "endpointId": "create_user_users_post",
+    "category": "positive",
+    "sourceRefs": [
+      "ER-CU-001",
+      "ER-CU-002",
+      "ER-CU-003",
+      "ER-CU-004",
+      "ER-CU-006",
+      "GR-001"
+    ],
+    "expectedStatusCode": 201,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create a user with a valid name and a valid email address",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Alice",
+          "email": "alice-04aa90f8@example.com"
+        },
+        "expectedStatusCode": 201,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.name",
+            "operator": "equals",
+            "expected": "Alice",
+            "actual": "Alice",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.email",
+            "operator": "equals",
+            "expected": "alice-04aa90f8@example.com",
+            "actual": "alice-04aa90f8@example.com",
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1138",
+          "name": "Alice",
+          "email": "alice-04aa90f8@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-002",
+    "title": "Create user with name at minimum length boundary (1 character)",
+    "endpointId": "create_user_users_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-006"
+    ],
+    "expectedStatusCode": 201,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create a user with a 1-character name",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "A",
+          "email": "min-name-5eca1140@example.com"
+        },
+        "expectedStatusCode": 201,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.name",
+            "operator": "equals",
+            "expected": "A",
+            "actual": "A",
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.email",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1139",
+          "name": "A",
+          "email": "min-name-5eca1140@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-003",
+    "title": "Create user with name at maximum length boundary (100 characters)",
+    "endpointId": "create_user_users_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-006"
+    ],
+    "expectedStatusCode": 201,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create a user with a 100-character name",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "email": "max-name-d55f0af2@example.com"
+        },
+        "expectedStatusCode": 201,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.name",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "path": "$.email",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1140",
+          "name": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "email": "max-name-d55f0af2@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-004",
+    "title": "Reject user creation when name is missing",
+    "endpointId": "create_user_users_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-001",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Send a create-user request with the name field omitted",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "email": "no-name-bcd3d37f@example.com"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "name",
+              "message": "Field required"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-005",
+    "title": "Reject user creation when name is empty string",
+    "endpointId": "create_user_users_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Send a create-user request with an empty string for name",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "",
+          "email": "empty-name-cc5a979f@example.com"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "name",
+              "message": "String should have at least 1 character"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-006",
+    "title": "Reject user creation when name exceeds 100 characters",
+    "endpointId": "create_user_users_post",
+    "category": "boundary",
+    "sourceRefs": [
+      "ER-CU-002",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Send a create-user request with a 101-character name",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "email": "long-name-ecd07b6c@example.com"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "name",
+              "message": "String should have at most 100 characters"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-007",
+    "title": "Reject user creation when email is missing",
+    "endpointId": "create_user_users_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-003",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Send a create-user request with the email field omitted",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Bob"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "email",
+              "message": "Field required"
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-008",
+    "title": "Reject user creation when email format is invalid",
+    "endpointId": "create_user_users_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-004",
+      "ER-CU-007"
+    ],
+    "expectedStatusCode": 400,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Send a create-user request with a malformed email (missing @ symbol)",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Charlie",
+          "email": "not-an-email"
+        },
+        "expectedStatusCode": 400,
+        "actualStatusCode": 400,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Invalid request data",
+          "details": [
+            {
+              "field": "email",
+              "message": "value is not a valid email address: An email address must have an @-sign."
+            }
+          ]
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  },
+  {
+    "scenarioId": "SC-CUP-009",
+    "title": "Reject user creation with duplicate email",
+    "endpointId": "create_user_users_post",
+    "category": "negative",
+    "sourceRefs": [
+      "ER-CU-005",
+      "ER-CU-008"
+    ],
+    "expectedStatusCode": 409,
+    "passed": true,
+    "startedAtUtc": "2026-04-07T08:54:06Z",
+    "finishedAtUtc": "2026-04-07T08:54:06Z",
+    "failedStepIndex": null,
+    "steps": [
+      {
+        "index": 0,
+        "title": "Create a user with a unique email to establish the duplicate",
+        "stepRole": "setup",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Dave",
+          "email": "dup-5d02a83d@example.com"
+        },
+        "expectedStatusCode": null,
+        "actualStatusCode": 201,
+        "assertionResults": [
+          {
+            "path": "$.userId",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "userId": "u-1141",
+          "name": "Dave",
+          "email": "dup-5d02a83d@example.com"
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      },
+      {
+        "index": 1,
+        "title": "Attempt to create another user using the same email address",
+        "stepRole": "target",
+        "passed": true,
+        "method": "POST",
+        "path": "/users",
+        "requestBody": {
+          "name": "Eve",
+          "email": "dup-5d02a83d@example.com"
+        },
+        "expectedStatusCode": 409,
+        "actualStatusCode": 409,
+        "assertionResults": [
+          {
+            "path": "$.error",
+            "operator": "exists",
+            "expected": true,
+            "actual": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "responseBody": {
+          "error": "Email already exists",
+          "details": null
+        },
+        "error": null,
+        "startedAtUtc": "2026-04-07T08:54:06Z",
+        "finishedAtUtc": "2026-04-07T08:54:06Z"
+      }
+    ]
+  }
+]

@@ -1,0 +1,301 @@
+{
+  "generalRules": [
+    {
+      "id": "GR-001",
+      "text": "All requests and responses are in JSON format.",
+      "sourceRefs": [
+        "context:3.1. General rules"
+      ]
+    },
+    {
+      "id": "GR-002",
+      "text": "There is only one supported currency: \"EUR\".",
+      "sourceRefs": [
+        "context:3.1. General rules"
+      ]
+    },
+    {
+      "id": "GR-003",
+      "text": "The balance cannot be negative.",
+      "sourceRefs": [
+        "context:3.1. General rules"
+      ]
+    },
+    {
+      "id": "GR-004",
+      "text": "A user cannot transfer money to themselves.",
+      "sourceRefs": [
+        "context:3.1. General rules"
+      ]
+    },
+    {
+      "id": "GR-005",
+      "text": "A sender may make no more than 5 outgoing transfers per calendar day.",
+      "sourceRefs": [
+        "context:3.1. General rules"
+      ]
+    },
+    {
+      "id": "GR-006",
+      "text": "A sender may send no more than 5,000 EUR in total outgoing transfers per calendar day.",
+      "sourceRefs": [
+        "context:3.1. General rules"
+      ]
+    }
+  ],
+  "rulesByEndpoint": {
+    "create_user_users_post": [
+      {
+        "id": "ER-CU-001",
+        "text": "The `name` field is required.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-002",
+        "text": "The `name` field must be a string between 1 and 100 characters in length.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-003",
+        "text": "The `email` field is required.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-004",
+        "text": "The `email` field must have a valid email format.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-005",
+        "text": "The `email` field must be unique in the system.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-006",
+        "text": "A successful creation returns HTTP 201.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-007",
+        "text": "Invalid data (e.g. empty name, invalid email format) returns HTTP 400.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      },
+      {
+        "id": "ER-CU-008",
+        "text": "A duplicate email returns HTTP 409.",
+        "sourceRefs": [
+          "context:3.2.1. Create user"
+        ]
+      }
+    ],
+    "deposit_wallets_deposit_post": [
+      {
+        "id": "ER-DEP-001",
+        "text": "The `userId` field is required and must refer to an existing user.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      },
+      {
+        "id": "ER-DEP-002",
+        "text": "The `amount` field is required and must be a number greater than 0.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      },
+      {
+        "id": "ER-DEP-003",
+        "text": "The `amount` field must have at most two decimal places.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      },
+      {
+        "id": "ER-DEP-004",
+        "text": "The `currency` field must be \"EUR\"; no other values are supported.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      },
+      {
+        "id": "ER-DEP-005",
+        "text": "A successful deposit returns HTTP 200.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      },
+      {
+        "id": "ER-DEP-006",
+        "text": "Invalid data (negative or zero amount, wrong amount format, unsupported currency) returns HTTP 400.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      },
+      {
+        "id": "ER-DEP-007",
+        "text": "A non-existent user returns HTTP 404.",
+        "sourceRefs": [
+          "context:3.2.2. Deposit (top up balance)"
+        ]
+      }
+    ],
+    "get_transactions_wallets__userId__transactions_get": [
+      {
+        "id": "ER-GTX-001",
+        "text": "The `userId` path parameter identifies the user whose transaction history is requested.",
+        "sourceRefs": [
+          "context:3.2.4. Transaction history"
+        ]
+      },
+      {
+        "id": "ER-GTX-002",
+        "text": "The `limit` query parameter controls how many records to return; default is 20 and maximum is 100.",
+        "sourceRefs": [
+          "context:3.2.4. Transaction history"
+        ]
+      },
+      {
+        "id": "ER-GTX-003",
+        "text": "The `offset` query parameter controls the pagination offset.",
+        "sourceRefs": [
+          "context:3.2.4. Transaction history"
+        ]
+      },
+      {
+        "id": "ER-GTX-004",
+        "text": "A successful retrieval returns HTTP 200.",
+        "sourceRefs": [
+          "context:3.2.4. Transaction history"
+        ]
+      },
+      {
+        "id": "ER-GTX-005",
+        "text": "Invalid limit or offset parameters return HTTP 400.",
+        "sourceRefs": [
+          "context:3.2.4. Transaction history"
+        ]
+      },
+      {
+        "id": "ER-GTX-006",
+        "text": "A non-existent user returns HTTP 404.",
+        "sourceRefs": [
+          "context:3.2.4. Transaction history"
+        ]
+      }
+    ],
+    "transfer_wallets_transfer_post": [
+      {
+        "id": "ER-TRF-001",
+        "text": "The `senderId` field is required and the sender must exist.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-002",
+        "text": "The `receiverId` field is required and the receiver must exist.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-003",
+        "text": "`senderId` must not equal `receiverId`; self-transfers are not allowed.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-004",
+        "text": "The `amount` field must be a number greater than 0.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-005",
+        "text": "The `amount` field must have at most two decimal places.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-006",
+        "text": "After the transfer, the sender's balance must not become negative.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-007",
+        "text": "The sender may make no more than 5 outgoing transfers per calendar day.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-008",
+        "text": "The total outgoing amount for the sender per calendar day must not exceed 5,000 EUR.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-009",
+        "text": "A successful transfer returns HTTP 200.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-010",
+        "text": "Invalid data (senderId = receiverId, amount <= 0, unsupported currency) returns HTTP 400.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-011",
+        "text": "Insufficient funds on the sender's account returns HTTP 402.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-012",
+        "text": "Daily limit on number of operations exceeded returns HTTP 403.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-013",
+        "text": "Daily amount limit exceeded returns HTTP 429.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      },
+      {
+        "id": "ER-TRF-014",
+        "text": "Sender or receiver not found returns HTTP 404.",
+        "sourceRefs": [
+          "context:3.2.3. Transfer between users"
+        ]
+      }
+    ]
+  }
+}
