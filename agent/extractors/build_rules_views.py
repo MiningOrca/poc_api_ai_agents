@@ -96,29 +96,33 @@ class RulesViewsBuilder:
 
     def _parse_parameters(self, endpoint: dict[str, Any]) -> list[dict[str, str]]:
         parameters = endpoint.get("parameters")
-
         if isinstance(parameters, list) and parameters:
-            result: list[dict[str, str]] = []
-            for item in parameters:
-                if isinstance(item, dict):
-                    name = self._normalize_inline_text(str(item.get("name", "")))
-                    description = self._normalize_inline_text(str(item.get("description", "")))
-                    if name:
-                        result.append({
-                            "name": name,
-                            "description": description,
-                        })
-                else:
-                    text = self._normalize_inline_text(str(item))
-                    if text:
-                        result.append({
-                            "name": text,
-                            "description": "",
-                        })
-            return result
+            return self._parse_parameters_from_list(parameters)
+        return self._parse_parameters_from_block(endpoint.get("parameters_block"))
 
+    def _parse_parameters_from_list(self, parameters: list) -> list[dict[str, str]]:
         result: list[dict[str, str]] = []
-        for line in self._clean_block_lines(endpoint.get("parameters_block")):
+        for item in parameters:
+            if isinstance(item, dict):
+                name = self._normalize_inline_text(str(item.get("name", "")))
+                description = self._normalize_inline_text(str(item.get("description", "")))
+                if name:
+                    result.append({
+                        "name": name,
+                        "description": description,
+                    })
+            else:
+                text = self._normalize_inline_text(str(item))
+                if text:
+                    result.append({
+                        "name": text,
+                        "description": "",
+                    })
+        return result
+
+    def _parse_parameters_from_block(self, block: str | None) -> list[dict[str, str]]:
+        result: list[dict[str, str]] = []
+        for line in self._clean_block_lines(block):
             if "—" in line:
                 name, description = line.split("—", 1)
             elif ":" in line:
@@ -130,7 +134,6 @@ class RulesViewsBuilder:
                 "name": self._normalize_inline_text(name),
                 "description": self._normalize_inline_text(description),
             })
-
         return result
 
     def _parse_endpoint_rules(self, endpoint: dict[str, Any]) -> list[str]:
@@ -146,31 +149,33 @@ class RulesViewsBuilder:
 
     def _parse_error_responses(self, endpoint: dict[str, Any]) -> list[dict[str, Any]]:
         error_responses = endpoint.get("error_responses")
-
         if isinstance(error_responses, list) and error_responses:
-            result: list[dict[str, Any]] = []
-            for item in error_responses:
-                if isinstance(item, dict):
-                    status_code = item.get("status_code")
-                    description = self._normalize_inline_text(str(item.get("description", "")))
+            return self._parse_error_responses_from_list(error_responses)
+        return self._parse_error_responses_from_block(endpoint.get("error_responses_block"))
 
-                    if status_code is not None:
-                        result.append({
-                            "status_code": int(status_code),
-                            "description": description,
-                        })
-                else:
-                    parsed = self._parse_error_line(str(item))
-                    if parsed:
-                        result.append(parsed)
-            return result
-
+    def _parse_error_responses_from_list(self, error_responses: list) -> list[dict[str, Any]]:
         result: list[dict[str, Any]] = []
-        for line in self._clean_block_lines(endpoint.get("error_responses_block")):
+        for item in error_responses:
+            if isinstance(item, dict):
+                status_code = item.get("status_code")
+                description = self._normalize_inline_text(str(item.get("description", "")))
+                if status_code is not None:
+                    result.append({
+                        "status_code": int(status_code),
+                        "description": description,
+                    })
+            else:
+                parsed = self._parse_error_line(str(item))
+                if parsed:
+                    result.append(parsed)
+        return result
+
+    def _parse_error_responses_from_block(self, block: str | None) -> list[dict[str, Any]]:
+        result: list[dict[str, Any]] = []
+        for line in self._clean_block_lines(block):
             parsed = self._parse_error_line(line)
             if parsed:
                 result.append(parsed)
-
         return result
 
     def _parse_error_line(self, line: str) -> dict[str, Any] | None:
