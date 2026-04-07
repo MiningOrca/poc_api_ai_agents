@@ -181,13 +181,10 @@ class SpecSectionsBuilder:
 
         return [self._parse_endpoint_chunk(chunk) for chunk in chunks]
 
-    def _parse_endpoint_chunk(self, lines: list[str]) -> dict[str, Any]:
-        raw_block = self._join_lines(lines)
-        section_number, title = self._parse_endpoint_heading(lines[0])
-
-        method, path = self._extract_method_and_path(lines)
-
-        section_buffers = {
+    def _route_lines_into_sections(
+        self, lines: list[str]
+    ) -> tuple[dict[str, list[str]], int | None]:
+        section_buffers: dict[str, list[str]] = {
             "request_example": [],
             "rules": [],
             "parameters": [],
@@ -198,7 +195,7 @@ class SpecSectionsBuilder:
         current_section: str | None = None
         success_status_code: int | None = None
 
-        for line in lines[1:]:
+        for line in lines:
             stripped = line.strip()
 
             if self._is_request_example_label(stripped):
@@ -229,12 +226,18 @@ class SpecSectionsBuilder:
             if current_section is not None:
                 section_buffers[current_section].append(line)
 
+        return section_buffers, success_status_code
+
+    def _parse_endpoint_chunk(self, lines: list[str]) -> dict[str, Any]:
+        raw_block = self._join_lines(lines)
+        section_number, title = self._parse_endpoint_heading(lines[0])
+        method, path = self._extract_method_and_path(lines)
+        section_buffers, success_status_code = self._route_lines_into_sections(lines[1:])
         request_example_block = self._join_lines(section_buffers["request_example"])
         rules_block = self._join_lines(section_buffers["rules"])
         parameters_block = self._join_lines(section_buffers["parameters"])
         response_example_block = self._join_lines(section_buffers["response_example"])
         error_responses_block = self._join_lines(section_buffers["error_responses"])
-
         endpoint = {
             "endpoint_id": self._slugify(title),
             "section_number": section_number,
@@ -254,13 +257,11 @@ class SpecSectionsBuilder:
             "response_example": self._parse_json_from_block(response_example_block),
             "success_status_code": success_status_code,
         }
-
         endpoint["views"] = {
             "rules_only_view": self._build_rules_only_view(endpoint),
             "contract_view": self._build_contract_view(endpoint),
             "example_view": self._build_example_view(endpoint),
         }
-
         return endpoint
 
     def _extract_method_and_path(self, lines: list[str]) -> tuple[str | None, str | None]:
@@ -428,16 +429,13 @@ class SpecSectionsBuilder:
 
         return result
 
-    def _build_rules_only_view(self, endpoint: dict[str, Any]) -> str:
-        parts: list[str] = []
-
+    def _build_endpoint_header_lines(self, endpoint: dict[str, Any]) -> list[str]:
         method = endpoint.get("method") or ""
         path = endpoint.get("path") or ""
         title = endpoint.get("title") or ""
-
+        parts: list[str] = []
         parts.append(f"Endpoint: {method} {path}".strip())
         parts.append(f"Title: {title}")
-
         if endpoint.get("parameters"):
             parts.append("")
             parts.append("Parameters:")
@@ -446,13 +444,10 @@ class SpecSectionsBuilder:
                     parts.append(f"- {p['name']}: {p['description']}")
                 else:
                     parts.append(f"- {p['description']}")
+        return parts
 
-        if endpoint.get("rules"):
-            parts.append("")
-            parts.append("Rules:")
-            for rule in endpoint["rules"]:
-                parts.append(f"- {rule}")
-
+    def _build_error_response_lines(self, endpoint: dict[str, Any]) -> list[str]:
+        parts: list[str] = []
         if endpoint.get("error_responses"):
             parts.append("")
             parts.append("Error responses:")
@@ -463,30 +458,25 @@ class SpecSectionsBuilder:
                     parts.append(f"- {code}: {desc}")
                 else:
                     parts.append(f"- {desc}")
+        return parts
 
+    def _build_rules_only_view(self, endpoint: dict[str, Any]) -> str:
+        parts = self._build_endpoint_header_lines(endpoint)
+
+        if endpoint.get("rules"):
+            parts.append("")
+            parts.append("Rules:")
+            for rule in endpoint["rules"]:
+                parts.append(f"- {rule}")
+
+        parts.extend(self._build_error_response_lines(endpoint))
         return "\n".join(parts).strip()
 
     def _build_contract_view(self, endpoint: dict[str, Any]) -> str:
-        parts: list[str] = []
-
-        method = endpoint.get("method") or ""
-        path = endpoint.get("path") or ""
-        title = endpoint.get("title") or ""
-
-        parts.append(f"Endpoint: {method} {path}".strip())
-        parts.append(f"Title: {title}")
+        parts = self._build_endpoint_header_lines(endpoint)
 
         if endpoint.get("success_status_code") is not None:
-            parts.append(f"Success status code: {endpoint['success_status_code']}")
-
-        if endpoint.get("parameters"):
-            parts.append("")
-            parts.append("Parameters:")
-            for p in endpoint["parameters"]:
-                if p["name"]:
-                    parts.append(f"- {p['name']}: {p['description']}")
-                else:
-                    parts.append(f"- {p['description']}")
+            parts.insert(2, f"Success status code: {endpoint['success_status_code']}")
 
         if endpoint.get("request_example") is not None:
             parts.append("")
@@ -498,28 +488,11 @@ class SpecSectionsBuilder:
             parts.append("Response example JSON:")
             parts.append(json.dumps(endpoint["response_example"], ensure_ascii=False, indent=2))
 
-        if endpoint.get("error_responses"):
-            parts.append("")
-            parts.append("Error responses:")
-            for err in endpoint["error_responses"]:
-                code = err.get("status_code")
-                desc = err.get("description", "")
-                if code is not None:
-                    parts.append(f"- {code}: {desc}")
-                else:
-                    parts.append(f"- {desc}")
-
+        parts.extend(self._build_error_response_lines(endpoint))
         return "\n".join(parts).strip()
 
     def _build_example_view(self, endpoint: dict[str, Any]) -> str:
-        parts: list[str] = []
-
-        method = endpoint.get("method") or ""
-        path = endpoint.get("path") or ""
-        title = endpoint.get("title") or ""
-
-        parts.append(f"Endpoint: {method} {path}".strip())
-        parts.append(f"Title: {title}")
+        parts = self._build_endpoint_header_lines(endpoint)
 
         if endpoint.get("request_example_block"):
             parts.append("")
@@ -544,12 +517,8 @@ class SpecSectionsBuilder:
 def main() -> None:
     builder = SpecSectionsBuilder()
 
-    input_path = "../input/conext.md"
+    input_path = "../input/context.md"
     output_path = "../input/spec_sections.json"
 
     result = builder.build(input_path=input_path, output_path=output_path)
     print(json.dumps(result, ensure_ascii=False, indent=2))
-
-
-if __name__ == "__main__":
-    main()
