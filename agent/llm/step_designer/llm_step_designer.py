@@ -263,6 +263,11 @@ class LlmStepDesigner:
                 prior_step_summary,
             )
 
+        if "deposit" in str(contract.get("path", "")):
+            parts.append(
+                '- For deposit-like requests: if body contains "amount" and no exact amount is required by context or test summary or Test case summary , use a fixed safe amount 1000.00.'
+            )
+
         parts.extend([
             "",
             "Important reminders:",
