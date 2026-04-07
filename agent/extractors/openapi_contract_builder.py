@@ -397,12 +397,3 @@ class OpenApiContractBuilder:
             raise FileNotFoundError(f"Input file not found: {path}")
         with path.open("r", encoding="utf-8") as f:
             return json.load(f)
-
-
-if __name__ == "__main__":
-    builder = OpenApiContractBuilder(
-        input_path="../input/open_api.json",
-        output_path="../input/contract.json",
-    )
-    output = builder.build_and_save()
-    print(f"contract.json written to: {output}")

@@ -256,7 +256,3 @@ def main() -> None:
 
     output_path = builder.build_and_save()
     print(f"rules_views written to: {output_path}")
-
-
-if __name__ == "__main__":
-    main()
