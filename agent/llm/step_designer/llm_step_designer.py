@@ -138,6 +138,12 @@ class LlmStepDesigner:
     - Do not use an Output context plan key as an input placeholder unless that key is also listed in Available context keys.
     - If an output context key must be produced and no input value exists for it, generate a valid request value and map it in produceBinding.
 
+    Scenario context fields (provided in "Remaining scenario context:" in the user prompt):
+    - remainingSetupStepCount: number of setup steps remaining after this one.
+    - isLastSetupBeforeTarget: true when this is the last setup step before the target step.
+      When true, bring state to the boundary needed by the target condition, but do not trigger
+      the failure condition itself.
+
     Body rules:
     - For GET requests, body must be null.
     - For POST, PUT, and PATCH requests:
@@ -157,6 +163,12 @@ class LlmStepDesigner:
     - Do not use unnamed random placeholders such as "$${random_email}" or "$${random_str}".
     - Reuse the exact same placeholder name when the same generated value must appear in multiple places.
     - Use different placeholder names when different generated values are needed.
+    - For setup steps with numeric fields (e.g. "amount", "quantity"):
+      first derive the required value from the test case title and setupReason —
+      the setup must produce state that makes the target condition reachable.
+      Only if the title and setupReason give no indication of a specific value,
+      use a small fixed safe value (e.g. 1000.00 for decimal, 10 for integer).
+      Do not use a random placeholder.
 
     Allowed random placeholder types:
     - random_str
@@ -196,11 +208,6 @@ class LlmStepDesigner:
         - If a higher-priority source implies a concrete invalid, boundary, or special-condition value, lower-priority rules must not weaken it.
         - If the title or step summary implies a specific failure or boundary condition, the request must encode that condition directly.
     
-    Before producing the final JSON, silently verify:
-    - Which request field is under test?
-    - Does the generated value for that field directly realize the condition described in the title and step summary?
-    - Did any random placeholder get used for the tested field? If yes, replace it with a concrete value.
-    - Would this request still test the intended condition if executed as written?
     """.strip()
 
     def _build_user_prompt(
@@ -228,6 +235,7 @@ class LlmStepDesigner:
         add_section(parts, "Current step:", self._build_prompt_current_step(current_step))
         add_section(parts, "Request method:", contract["method"])
         add_section(parts, "Request path:", contract["path"])
+        add_section(parts, "Expected status code:", contract.get("expectedStatusCode"))
 
         if consumes_context:
             add_section(parts, "Consumed context:", consumes_context)
@@ -242,51 +250,96 @@ class LlmStepDesigner:
 
         add_section(parts, "Expected response body contract:", contract.get("expectedResponseBody"))
 
-        add_section(parts, "Remaining scenario context:", remaining_context)
-        add_section(
-            parts,
-            "Available context keys:",
-            sorted(available_context.keys()) or [],
-        )
+        meaningful_remaining = self._build_meaningful_remaining_context(remaining_context)
+        if meaningful_remaining:
+            add_section(parts, "Remaining scenario context:", meaningful_remaining)
+
+        if available_context:
+            add_section(parts, "Available context keys:", sorted(available_context.keys()))
 
         if output_context_plan:
-            add_section(
-                parts,
-                "Output context plan:",
-                output_context_plan,
-            )
+            add_section(parts, "Output context plan:", output_context_plan)
 
         if prior_step_summary:
-            add_section(
-                parts,
-                "Prior step summaries:",
-                prior_step_summary,
-            )
+            add_section(parts, "Prior step summaries:", prior_step_summary)
 
-        if "deposit" in str(contract.get("path", "")):
-            parts.append(
-                '- For deposit-like requests: if body contains "amount" and no exact amount is required by context or test summary or Test case summary , use a fixed safe amount 1000.00.'
-            )
+        step_role = current_step.get("stepRole", "target")
+        has_body = bool(contract.get("requestBody"))
+        is_last_setup = bool(remaining_context and remaining_context.get("isLastSetupBeforeTarget"))
 
-        parts.extend([
-            "",
-            "Important reminders:",
-            '- Use "$${contextKey}" only for available context keys.',
-            "- Put required request fields into body when a request body is required.",
-            "- Do not move request fields into fieldAssertions.",
-            "- stepSummary must state the action and the key concrete parameters of this step. Include important values such as user identifiers, amount, currency, limit, offset, or exact boundary value when relevant.",
-            "- If a non-context value is needed and the exact literal is not important, prefer an allowed named random placeholder.",
-            "- Setup steps must not already trigger the tested failure condition unless the test case explicitly requires setup failure.",
-            "- If isLastSetupBeforeTarget is true, prepare the state as close as needed to the boundary but do not cross it.",
-            '- If no stable exact response field is available, return "fieldAssertions": [].',
-        ])
+        reminders = ["", "Important reminders:"]
+        if available_context:
+            reminders.append('- Use "$${contextKey}" only for available context keys.')
+        if has_body:
+            reminders.append("- Put required request fields into body when a request body is required.")
+            reminders.append("- Do not move request fields into fieldAssertions.")
+        reminders.append(
+            "- stepSummary must state the action and the key concrete parameters of this step."
+            " Include important values such as user identifiers, amount, currency, limit, offset,"
+            " or exact boundary value when relevant."
+        )
+        if step_role != "setup":
+            reminders.append(
+                "- If a non-context value is needed and the exact literal is not important,"
+                " prefer an allowed named random placeholder."
+            )
+        if step_role == "setup":
+            reminders.append(
+                "- Setup steps must not already trigger the tested failure condition"
+                " unless the test case explicitly requires setup failure."
+            )
+        reminders.append('- If no stable exact response field is available, return "fieldAssertions": [].')
+        parts.extend(reminders)
 
         if consumes_context:
             parts.append(
-                "Consumed context enforcement: every consumed context key must be used at least once in pathParams, queryParams, or body unless the request contract makes that impossible."
+                "Consumed context enforcement: every consumed context key must be used at least once"
+                " in pathParams, queryParams, or body unless the request contract makes that impossible."
             )
 
+        if output_context_plan:
+            parts.extend([
+                "",
+                "produceBinding rules:",
+                "- Generate produceBinding only for keys listed in Output context plan.",
+                "- Each produceBinding entry must map one contextKey to one response field path.",
+                '- Use simple JSONPath starting with "$.".',
+            ])
+
+        if step_role == "target":
+            parts.extend([
+                "",
+                "Before producing the final JSON, silently verify:",
+                "- Which request field or fields are under test?",
+                "- Does the generated value for that field directly realize the condition described in the title and step summary?",
+                "- Did any random placeholder get used for the tested field? If yes, replace it with a concrete value.",
+                "- Would this request still test the intended condition if executed as written?",
+            ])
+        else:
+            verify = [
+                "",
+                "Before producing the final JSON, silently verify:",
+                "- Does this step produce valid, successfully completing precondition state?",
+                "- Does this step accidentally trigger the failure condition described in the test title? If yes, fix it.",
+                "- If this step sets a numeric value (e.g. amount): does that value make the target condition from the title actually reachable? If not, adjust it.",
+            ]
+            if is_last_setup:
+                verify.append("- Is the state at the required boundary without crossing it?")
+            parts.extend(verify)
+
         return "\n".join(self._normalize_section_value(x) for x in parts).strip()
+
+    @staticmethod
+    def _build_meaningful_remaining_context(remaining_context: dict[str, Any] | None) -> dict[str, Any]:
+        if not remaining_context:
+            return {}
+        result: dict[str, Any] = {}
+        count = remaining_context.get("remainingSetupStepCount", 0)
+        if count:
+            result["remainingSetupStepCount"] = count
+        if remaining_context.get("isLastSetupBeforeTarget"):
+            result["isLastSetupBeforeTarget"] = True
+        return result
 
     @staticmethod
     def _build_prompt_current_step(current_step: dict[str, Any]) -> dict[str, Any]:

@@ -102,6 +102,8 @@ class ScenarioRunner:
         result = ScenarioRunResult(
             title=str(scenario.get("title", "")),
             endpoint_id=str(scenario.get("endpointId", "")),
+            caseId=str(scenario.get("parentTestCaseId", "")),
+            scenarioId=str(scenario.get("id", "")),
             passed=False,
             started_at_utc=started_at,
         )

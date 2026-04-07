@@ -112,6 +112,11 @@ class LlmTestDesigner:
     Each case may contain:
     - setupReason
 
+    Category definitions:
+    - positive: valid input, all preconditions met, expected successful outcome
+    - negative: invalid, missing, or forbidden input that triggers a documented error response
+    - boundary: edge values at documented limits (e.g. empty string, maximum length, minimum/maximum amount, zero, exact threshold)
+
     Mode rules:
     - Use mode="single" when the target case does not require prior API-created state.
     - Use mode="chain" when prior API-created state is required before the target step.
@@ -120,6 +125,7 @@ class LlmTestDesigner:
     - Prefer documented sample data when it already satisfies the target preconditions.
     - Use chain mode only when the required target state cannot be obtained directly from the provided sample data.
     - Do not introduce setup steps when an equivalent single-case design is already supported by the documented initial state.
+    - If the documented initial state cannot possibly satisfy the required precondition (e.g. the condition is only reachable after prior API calls have been made), chain mode is required regardless of what sample data is available.
     - When chain mode is necessary, include all setup steps needed to establish the target preconditions, but do not include unrelated preparation.
 
     Step rules:
@@ -137,6 +143,8 @@ class LlmTestDesigner:
     - The target step endpointId must match the case endpointId.
     - Use only endpointIds from the provided endpoint catalog.
     - Use only the minimum necessary number of setup steps needed to establish the required target preconditions.
+    - producesContext: keys that will be extracted from this step's response and passed to later steps. Use only when a value is actually needed downstream.
+    - consumesContext: keys from prior steps' producesContext that this step needs as input.
     - producesContext and consumesContext must contain only short snake_case keys.
     - Do not include prose explanations, request bodies, assertions, or orchestration details inside steps.
 
@@ -157,10 +165,17 @@ class LlmTestDesigner:
     - Setup step stepStatusCode values must also be explicitly supported by the provided facts for their respective endpoints.
     - Do not invent undocumented status codes for any step.
 
-    Other field rules:
-    - sourceRefs must be non-empty and relevant.
+    Other field rules:       
+    - sourceRefs must be non-empty and reference specific items from the provided input: a rule text snippet, a parameter name, an error status code, or a documented constraint. Generic labels such as "endpoint rules" or "general rules" are not acceptable.
+    - Do not include expectedStatusCode at the case level. Expected outcomes are expressed only through steps[*].stepStatusCode.
     - Titles must be short, concrete, and human-readable.
     - Titles must describe the business test idea, not transport details.
+    - Bad title examples: "POST /users with valid data", "GET request returns 200", "Delete endpoint success".
+    - Good title examples: "Deposit with non exist userId", "Create account with duplicate email", "Transfer with zero amount".
+
+    Endpoint catalog usage:
+    - The endpoint catalog is provided exclusively to help you select valid endpointIds for setup steps in chain mode.
+    - Do not generate test ideas for any endpoint other than the target endpoint.
 
     Output rules:
     - Return JSON only.
@@ -203,11 +218,6 @@ class LlmTestDesigner:
             "- When prior API-created state is required, include all necessary setup steps to reach the target preconditions.",
             "- Setup may involve other endpoints when they are needed to build valid prerequisite state for the target case.",
             "- Keep setup justified and relevant: include everything necessary, but nothing unrelated to the target case.",
-            "- Do not return expectedStatusCode at the case level.",
-            "- Represent expected outcomes only through steps[*].stepStatusCode.",
-            "- The target case outcome is defined by the target step stepStatusCode.",
-            "- For single-mode cases, the single target step carries the only expected status code for the case.",
-            "- For chain cases, setup steps must each have their own stepStatusCode and the final target step must carry the final expected outcome.",
         ])
 
         return "\n".join(parts).strip()
