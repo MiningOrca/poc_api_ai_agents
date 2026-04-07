@@ -140,13 +140,6 @@ class LlmExecutionAuditor:
 
         return response_json
 
-    def _truncate_text(self, value: str | None) -> str | None:
-        if value is None:
-            return None
-        if len(value) <= self._max_response_text_chars:
-            return value
-        return value[: self._max_response_text_chars] + "...<truncated>"
-
     def _truncate_jsonish(self, value: Any) -> Any:
         if value is None:
             return None
