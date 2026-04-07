@@ -214,18 +214,17 @@ class LlmTestDesigner:
 
     # HTTP verbs that should never appear as words in a test case title.
     _HTTP_METHODS: frozenset[str] = frozenset(
-        {"get", "post", "put", "patch", "delete", "head", "options"}
+        {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
     )
 
     def _normalize_title(self, value: str) -> str:
         return re.sub(r"\s+", " ", value.strip().lower())
 
     def _title_contains_http_method(self, title: str) -> bool:
-        """Return True if the title contains any HTTP verb as a standalone word.
-
+        """Return True if the title contains any HTTP verb as a standalone uppercase word.
         Titles must describe business intent, not transport-level details.
         """
-        padded = f" {title.lower()} "
+        padded = f" {title} "
         return any(f" {method} " in padded for method in self._HTTP_METHODS)
 
     def _title_contains_api_path(self, title: str) -> bool:
