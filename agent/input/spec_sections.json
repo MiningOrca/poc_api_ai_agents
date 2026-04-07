@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "source_file": "/Users/egorkhalzov/PycharmProjects/APIAgent/agent/input/conext.md",
+    "parser_version": "1.0.0",
+    "format": "spec_sections"
+  },
+  "general_rules_block": "* All requests and responses are in JSON format.\n* There is only one currency for simplicity: `\"EUR\"`.\n* The balance cannot be negative.\n* A user cannot transfer money to themselves.\n* There is a daily limit:\n\n  * no more than 5 outgoing transfers per calendar day per sender user;\n  * no more than 5,000 EUR of outgoing transfers per calendar day per sender user.",
+  "general_rules": [],
+  "sample_data_block": "",
+  "sample_data": [],
+  "endpoints": [
+    {
+      "endpoint_id": "create_user",
+      "section_number": "3.2.1",
+      "title": "Create user",
+      "method": "POST",
+      "path": "/users",
+      "raw_block": "### 3.2.1. Create user\n\n**POST** `/users`\n\n**Request example:**\n\n```json\n{\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```\n\n**Rules:**\n\n* `name`: required, string 1–100 characters.\n* `email`: required, string, must be unique in the system and have a valid email format.\n\n**Successful response (201):**\n\n```json\n{\n  \"userId\": \"u-1001\",\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```\n\n**Error responses:**\n\n* `400` — invalid data (e.g. empty name, invalid email format)\n* `409` — email already exists",
+      "rules_block": "* `name`: required, string 1–100 characters.\n* `email`: required, string, must be unique in the system and have a valid email format.",
+      "rules": [],
+      "parameters_block": "",
+      "parameters": [],
+      "error_responses_block": "* `400` — invalid data (e.g. empty name, invalid email format)\n* `409` — email already exists",
+      "error_responses": [],
+      "request_example_block": "```json\n{\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```",
+      "request_example": {
+        "name": "Alice",
+        "email": "alice@example.com"
+      },
+      "response_example_block": "```json\n{\n  \"userId\": \"u-1001\",\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```",
+      "response_example": {
+        "userId": "u-1001",
+        "name": "Alice",
+        "email": "alice@example.com"
+      },
+      "success_status_code": 201,
+      "views": {
+        "rules_only_view": "Endpoint: POST /users\nTitle: Create user",
+        "contract_view": "Endpoint: POST /users\nTitle: Create user\nSuccess status code: 201\n\nRequest example JSON:\n{\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n\nResponse example JSON:\n{\n  \"userId\": \"u-1001\",\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}",
+        "example_view": "Endpoint: POST /users\nTitle: Create user\n\nRequest example:\n```json\n{\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```\n\nSuccessful response example:\n```json\n{\n  \"userId\": \"u-1001\",\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```"
+      }
+    },
+    {
+      "endpoint_id": "deposit_top_up_balance",
+      "section_number": "3.2.2",
+      "title": "Deposit (top up balance)",
+      "method": "POST",
+      "path": "/wallets/deposit",
+      "raw_block": "### 3.2.2. Deposit (top up balance)\n\n**POST** `/wallets/deposit`\n\n**Request example:**\n\n```json\n{\n  \"userId\": \"u-1001\",\n  \"amount\": 100.50,\n  \"currency\": \"EUR\"\n}\n```\n\n**Rules:**\n\n* `userId`: required, must refer to an existing user.\n* `amount`: required, number > 0, up to two decimal places.\n* `currency`: currently only `\"EUR\"` is supported.\n\n**Successful response (200):**\n\n```json\n{\n  \"userId\": \"u-1001\",\n  \"newBalance\": 100.50,\n  \"currency\": \"EUR\"\n}\n```\n\n**Error responses:**\n\n* `400` — invalid data (negative or zero amount, wrong amount format, unsupported currency)\n* `404` — user not found",
+      "rules_block": "* `userId`: required, must refer to an existing user.\n* `amount`: required, number > 0, up to two decimal places.\n* `currency`: currently only `\"EUR\"` is supported.",
+      "rules": [],
+      "parameters_block": "",
+      "parameters": [],
+      "error_responses_block": "* `400` — invalid data (negative or zero amount, wrong amount format, unsupported currency)\n* `404` — user not found",
+      "error_responses": [],
+      "request_example_block": "```json\n{\n  \"userId\": \"u-1001\",\n  \"amount\": 100.50,\n  \"currency\": \"EUR\"\n}\n```",
+      "request_example": {
+        "userId": "u-1001",
+        "amount": 100.5,
+        "currency": "EUR"
+      },
+      "response_example_block": "```json\n{\n  \"userId\": \"u-1001\",\n  \"newBalance\": 100.50,\n  \"currency\": \"EUR\"\n}\n```",
+      "response_example": {
+        "userId": "u-1001",
+        "newBalance": 100.5,
+        "currency": "EUR"
+      },
+      "success_status_code": 200,
+      "views": {
+        "rules_only_view": "Endpoint: POST /wallets/deposit\nTitle: Deposit (top up balance)",
+        "contract_view": "Endpoint: POST /wallets/deposit\nTitle: Deposit (top up balance)\nSuccess status code: 200\n\nRequest example JSON:\n{\n  \"userId\": \"u-1001\",\n  \"amount\": 100.5,\n  \"currency\": \"EUR\"\n}\n\nResponse example JSON:\n{\n  \"userId\": \"u-1001\",\n  \"newBalance\": 100.5,\n  \"currency\": \"EUR\"\n}",
+        "example_view": "Endpoint: POST /wallets/deposit\nTitle: Deposit (top up balance)\n\nRequest example:\n```json\n{\n  \"userId\": \"u-1001\",\n  \"amount\": 100.50,\n  \"currency\": \"EUR\"\n}\n```\n\nSuccessful response example:\n```json\n{\n  \"userId\": \"u-1001\",\n  \"newBalance\": 100.50,\n  \"currency\": \"EUR\"\n}\n```"
+      }
+    },
+    {
+      "endpoint_id": "transfer_between_users",
+      "section_number": "3.2.3",
+      "title": "Transfer between users",
+      "method": "POST",
+      "path": "/wallets/transfer",
+      "raw_block": "### 3.2.3. Transfer between users\n\n**POST** `/wallets/transfer`\n\n**Request example:**\n\n```json\n{\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.00,\n  \"currency\": \"EUR\",\n  \"comment\": \"Dinner\"\n}\n```\n\n**Rules:**\n\n* `senderId` and `receiverId`: required, both users must exist.\n* `senderId ≠ receiverId` (self-transfers are not allowed).\n* `amount`: number > 0, up to two decimal places.\n* After the transfer, the sender’s balance must not become negative.\n* Daily limits for the sender:\n\n  * no more than 5 outgoing transfers per calendar day;\n  * total outgoing amount per calendar day ≤ 5,000 EUR.\n\n**Successful response (200):**\n\n```json\n{\n  \"operationId\": \"tr-9001\",\n  \"status\": \"SUCCESS\",\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.00,\n  \"currency\": \"EUR\"\n}\n```\n\n**Error responses:**\n\n* `400` — invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)\n* `402` — insufficient funds on the sender’s account\n* `403` — daily limit on number of operations exceeded\n* `429` — daily amount limit exceeded\n* `404` — sender or receiver not found",
+      "rules_block": "* `senderId` and `receiverId`: required, both users must exist.\n* `senderId ≠ receiverId` (self-transfers are not allowed).\n* `amount`: number > 0, up to two decimal places.\n* After the transfer, the sender’s balance must not become negative.\n* Daily limits for the sender:\n\n  * no more than 5 outgoing transfers per calendar day;\n  * total outgoing amount per calendar day ≤ 5,000 EUR.",
+      "rules": [],
+      "parameters_block": "",
+      "parameters": [],
+      "error_responses_block": "* `400` — invalid data (senderId = receiverId, amount ≤ 0, unsupported currency)\n* `402` — insufficient funds on the sender’s account\n* `403` — daily limit on number of operations exceeded\n* `429` — daily amount limit exceeded\n* `404` — sender or receiver not found",
+      "error_responses": [],
+      "request_example_block": "```json\n{\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.00,\n  \"currency\": \"EUR\",\n  \"comment\": \"Dinner\"\n}\n```",
+      "request_example": {
+        "senderId": "u-1001",
+        "receiverId": "u-1002",
+        "amount": 30.0,
+        "currency": "EUR",
+        "comment": "Dinner"
+      },
+      "response_example_block": "```json\n{\n  \"operationId\": \"tr-9001\",\n  \"status\": \"SUCCESS\",\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.00,\n  \"currency\": \"EUR\"\n}\n```",
+      "response_example": {
+        "operationId": "tr-9001",
+        "status": "SUCCESS",
+        "senderId": "u-1001",
+        "receiverId": "u-1002",
+        "amount": 30.0,
+        "currency": "EUR"
+      },
+      "success_status_code": 200,
+      "views": {
+        "rules_only_view": "Endpoint: POST /wallets/transfer\nTitle: Transfer between users",
+        "contract_view": "Endpoint: POST /wallets/transfer\nTitle: Transfer between users\nSuccess status code: 200\n\nRequest example JSON:\n{\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.0,\n  \"currency\": \"EUR\",\n  \"comment\": \"Dinner\"\n}\n\nResponse example JSON:\n{\n  \"operationId\": \"tr-9001\",\n  \"status\": \"SUCCESS\",\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.0,\n  \"currency\": \"EUR\"\n}",
+        "example_view": "Endpoint: POST /wallets/transfer\nTitle: Transfer between users\n\nRequest example:\n```json\n{\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.00,\n  \"currency\": \"EUR\",\n  \"comment\": \"Dinner\"\n}\n```\n\nSuccessful response example:\n```json\n{\n  \"operationId\": \"tr-9001\",\n  \"status\": \"SUCCESS\",\n  \"senderId\": \"u-1001\",\n  \"receiverId\": \"u-1002\",\n  \"amount\": 30.00,\n  \"currency\": \"EUR\"\n}\n```"
+      }
+    },
+    {
+      "endpoint_id": "transaction_history",
+      "section_number": "3.2.4",
+      "title": "Transaction history",
+      "method": "GET",
+      "path": "/wallets/{userId}/transactions?limit=20&offset=0",
+      "raw_block": "### 3.2.4. Transaction history\n\n**GET** `/wallets/{userId}/transactions?limit=20&offset=0`\n\n**Parameters:**\n\n* `userId` — user identifier.\n* `limit` — how many records to return (default 20, maximum 100).\n* `offset` — offset for pagination.\n\n**Successful response (200):**\n\n```json\n{\n  \"userId\": \"u-1001\",\n  \"transactions\": [\n    {\n      \"operationId\": \"tr-9001\",\n      \"type\": \"OUTGOING\",\n      \"amount\": 30.00,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T10:15:00Z\",\n      \"counterpartyId\": \"u-1002\",\n      \"comment\": \"Dinner\"\n    },\n    {\n      \"operationId\": \"tr-9002\",\n      \"type\": \"INCOMING\",\n      \"amount\": 50.00,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T11:00:00Z\",\n      \"counterpartyId\": \"u-1003\",\n      \"comment\": \"Gift\"\n    }\n  ]\n}\n```\n\n**Error responses:**\n\n* `400` — invalid limit/offset parameters\n* `404` — user not found",
+      "rules_block": "",
+      "rules": [],
+      "parameters_block": "* `userId` — user identifier.\n* `limit` — how many records to return (default 20, maximum 100).\n* `offset` — offset for pagination.",
+      "parameters": [],
+      "error_responses_block": "* `400` — invalid limit/offset parameters\n* `404` — user not found",
+      "error_responses": [],
+      "request_example_block": "",
+      "request_example": null,
+      "response_example_block": "```json\n{\n  \"userId\": \"u-1001\",\n  \"transactions\": [\n    {\n      \"operationId\": \"tr-9001\",\n      \"type\": \"OUTGOING\",\n      \"amount\": 30.00,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T10:15:00Z\",\n      \"counterpartyId\": \"u-1002\",\n      \"comment\": \"Dinner\"\n    },\n    {\n      \"operationId\": \"tr-9002\",\n      \"type\": \"INCOMING\",\n      \"amount\": 50.00,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T11:00:00Z\",\n      \"counterpartyId\": \"u-1003\",\n      \"comment\": \"Gift\"\n    }\n  ]\n}\n```",
+      "response_example": {
+        "userId": "u-1001",
+        "transactions": [
+          {
+            "operationId": "tr-9001",
+            "type": "OUTGOING",
+            "amount": 30.0,
+            "currency": "EUR",
+            "timestamp": "2026-03-24T10:15:00Z",
+            "counterpartyId": "u-1002",
+            "comment": "Dinner"
+          },
+          {
+            "operationId": "tr-9002",
+            "type": "INCOMING",
+            "amount": 50.0,
+            "currency": "EUR",
+            "timestamp": "2026-03-24T11:00:00Z",
+            "counterpartyId": "u-1003",
+            "comment": "Gift"
+          }
+        ]
+      },
+      "success_status_code": 200,
+      "views": {
+        "rules_only_view": "Endpoint: GET /wallets/{userId}/transactions?limit=20&offset=0\nTitle: Transaction history",
+        "contract_view": "Endpoint: GET /wallets/{userId}/transactions?limit=20&offset=0\nTitle: Transaction history\nSuccess status code: 200\n\nResponse example JSON:\n{\n  \"userId\": \"u-1001\",\n  \"transactions\": [\n    {\n      \"operationId\": \"tr-9001\",\n      \"type\": \"OUTGOING\",\n      \"amount\": 30.0,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T10:15:00Z\",\n      \"counterpartyId\": \"u-1002\",\n      \"comment\": \"Dinner\"\n    },\n    {\n      \"operationId\": \"tr-9002\",\n      \"type\": \"INCOMING\",\n      \"amount\": 50.0,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T11:00:00Z\",\n      \"counterpartyId\": \"u-1003\",\n      \"comment\": \"Gift\"\n    }\n  ]\n}",
+        "example_view": "Endpoint: GET /wallets/{userId}/transactions?limit=20&offset=0\nTitle: Transaction history\n\nSuccessful response example:\n```json\n{\n  \"userId\": \"u-1001\",\n  \"transactions\": [\n    {\n      \"operationId\": \"tr-9001\",\n      \"type\": \"OUTGOING\",\n      \"amount\": 30.00,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T10:15:00Z\",\n      \"counterpartyId\": \"u-1002\",\n      \"comment\": \"Dinner\"\n    },\n    {\n      \"operationId\": \"tr-9002\",\n      \"type\": \"INCOMING\",\n      \"amount\": 50.00,\n      \"currency\": \"EUR\",\n      \"timestamp\": \"2026-03-24T11:00:00Z\",\n      \"counterpartyId\": \"u-1003\",\n      \"comment\": \"Gift\"\n    }\n  ]\n}\n```"
+      }
+    }
+  ]
+}

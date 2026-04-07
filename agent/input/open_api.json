@@ -1,0 +1,712 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "E-Wallet Mock API",
+    "description": "Stateful mock API for the QA Automation with AI Agents test assignment. Implements create user, deposit, transfer, transaction history, and test-control endpoints.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Create user",
+        "operationId": "create_user_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wallets/deposit": {
+      "post": {
+        "tags": [
+          "wallets"
+        ],
+        "summary": "Deposit money to wallet",
+        "operationId": "deposit_wallets_deposit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepositResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid deposit request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wallets/transfer": {
+      "post": {
+        "tags": [
+          "wallets"
+        ],
+        "summary": "Transfer money between users",
+        "operationId": "transfer_wallets_transfer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transfer request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient funds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Daily count limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sender or receiver not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Daily amount limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{userId}/transactions": {
+      "get": {
+        "tags": [
+          "wallets"
+        ],
+        "summary": "Get transaction history",
+        "operationId": "get_transactions_wallets__userId__transactions_get",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User identifier",
+              "examples": [
+                "u-1001"
+              ],
+              "title": "Userid"
+            },
+            "description": "User identifier"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Page size, default 20, maximum 100",
+              "default": 20,
+              "title": "Limit"
+            },
+            "description": "Page size, default 20, maximum 100"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Pagination offset, must be \u003E= 0",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Pagination offset, must be \u003E= 0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid limit or offset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "properties": {
+          "error": {
+            "title": "Error",
+            "examples": [
+              "invalid request"
+            ]
+          },
+          "details": {
+            "title": "Details",
+            "examples": [
+              [
+                {
+                  "field": "amount",
+                  "message": "Amount must be greater than 0"
+                }
+              ]
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ApiError"
+      },
+      "CreateUserRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "examples": [
+              "Alice"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "examples": [
+              "alice@example.com"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "title": "CreateUserRequest"
+      },
+      "CreateUserResponse": {
+        "properties": {
+          "userId": {
+            "title": "Userid",
+            "examples": [
+              "u-1004"
+            ]
+          },
+          "name": {
+            "title": "Name",
+            "examples": [
+              "Dave"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "examples": [
+              "dave@example.com"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "userId",
+          "name",
+          "email"
+        ],
+        "title": "CreateUserResponse"
+      },
+      "DepositRequest": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid",
+            "examples": [
+              "u-1001"
+            ]
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Amount",
+            "examples": [100.5]
+          },
+          "currency": {
+            "type": "string",
+            "const": "EUR",
+            "title": "Currency",
+            "examples": [
+              "EUR"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "userId",
+          "amount",
+          "currency"
+        ],
+        "title": "DepositRequest"
+      },
+      "DepositResponse": {
+        "properties": {
+          "userId": {
+            "title": "Userid",
+            "examples": [
+              "u-1001"
+            ]
+          },
+          "newBalance": {
+            "title": "Newbalance",
+            "examples": [200.5]
+          },
+          "currency": {
+            "title": "Currency",
+            "examples": [
+              "EUR"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "userId",
+          "newBalance",
+          "currency"
+        ],
+        "title": "DepositResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "TransactionItem": {
+        "properties": {
+          "operationId": {
+            "title": "Operationid",
+            "examples": [
+              "tr-9001"
+            ]
+          },
+          "type": {
+            "title": "Type",
+            "examples": [
+              "OUTGOING"
+            ]
+          },
+          "amount": {
+            "title": "Amount",
+            "examples": [30]
+          },
+          "currency": {
+            "title": "Currency",
+            "examples": [
+              "EUR"
+            ]
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "examples": [
+              "2026-03-24T10:15:00Z"
+            ]
+          },
+          "counterpartyId": {
+            "title": "Counterpartyid",
+            "examples": [
+              "u-1002"
+            ]
+          },
+          "comment": {
+            "title": "Comment",
+            "examples": [
+              "Dinner"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "operationId",
+          "type",
+          "amount",
+          "currency",
+          "timestamp"
+        ],
+        "title": "TransactionItem"
+      },
+      "TransactionsResponse": {
+        "properties": {
+          "userId": {
+            "title": "Userid",
+            "examples": [
+              "u-1001"
+            ]
+          },
+          "transactions": {
+            "title": "Transactions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "userId",
+          "transactions"
+        ],
+        "title": "TransactionsResponse"
+      },
+      "TransferRequest": {
+        "properties": {
+          "senderId": {
+            "type": "string",
+            "title": "Senderid",
+            "examples": [
+              "u-1001"
+            ]
+          },
+          "receiverId": {
+            "type": "string",
+            "title": "Receiverid",
+            "examples": [
+              "u-1002"
+            ]
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Amount",
+            "examples": [30]
+          },
+          "currency": {
+            "type": "string",
+            "const": "EUR",
+            "title": "Currency",
+            "examples": [
+              "EUR"
+            ]
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment",
+            "examples": [
+              "Dinner"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "senderId",
+          "receiverId",
+          "amount",
+          "currency"
+        ],
+        "title": "TransferRequest"
+      },
+      "TransferResponse": {
+        "properties": {
+          "operationId": {
+            "title": "Operationid",
+            "examples": [
+              "tr-9001"
+            ]
+          },
+          "status": {
+            "title": "Status",
+            "examples": [
+              "SUCCESS"
+            ]
+          },
+          "senderId": {
+            "title": "Senderid",
+            "examples": [
+              "u-1001"
+            ]
+          },
+          "receiverId": {
+            "title": "Receiverid",
+            "examples": [
+              "u-1002"
+            ]
+          },
+          "amount": {
+            "title": "Amount",
+            "examples": [30]
+          },
+          "currency": {
+            "title": "Currency",
+            "examples": [
+              "EUR"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "operationId",
+          "status",
+          "senderId",
+          "receiverId",
+          "amount",
+          "currency"
+        ],
+        "title": "TransferResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
